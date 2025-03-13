@@ -3,10 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudentSite</title>
+    <title>Simple HTML Layout</title>
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>There is going to be a students website.</p>
+    <!-- Upper Panel -->
+    <table width="100%" border="1">
+        <tr>
+            <td colspan="2" align="left"><h1>CMS?</h1></td>
+            <p align="right">Stud Ent</p>
+        </tr>
+        <tr>
+            <!-- Left Side Panel -->
+            <td width="20%" valign="top">
+                <h2>Side Panel</h2>
+                <ul>
+                    <li><a href="page1.html" target="content">Dashboard</a></li>
+                    <li><a href="page2.html" target="content">Students</a></li>
+                    <li><a href="page3.html" target="content">Tasks</a></li>
+                </ul>
+            </td>
+            <!-- Main Content -->
+            <td width="80%" valign="top">
+                <h2>Main Content Area</h2>
+                <p>Students webside in progress...</p>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
