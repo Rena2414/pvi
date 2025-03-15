@@ -4,14 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students</title>
+    <link rel="stylesheet" href="css\styles.css">
+    <script src="scripts.js"></script>
 </head>
 <body>
     <!-- Upper Panel -->
     <table width="100%" border="1" style="width: 100%;">
         <tr>
             <td colspan="2">
-                <h1 style="display: inline;">CMS?</h1>
-                <span style="float: right;">Stud Ent</span>
+                <div class="header">
+                    <!-- CMS Logo -->
+                    <a href="students.html" class="logo">CMS</a>
+                    <!-- Notifications and Profile -->
+                    <div class="user-info">
+                        <div class="notifications">
+                            <!-- Bell Icon -->
+                            <span class="bell-icon">🔔</span>
+                            <!-- Dropdown for messages (placeholder) -->
+                            <div class="dropdown">
+                                <div>Message 1</div>
+                                <div>Message 2</div>
+                                <div>Message 3</div>
+                            </div>
+                        </div>
+                        <div class="profile">
+                            <!-- Avatar and Username -->
+                            <span class="avatar" style="border-radius: 50%; background-color: #ccc; width: 30px; height: 30px; display: inline-block;"></span> Stud Ent
+                            <!-- Dropdown for profile options -->
+                            <div class="dropdown">
+                                <div>Profile</div>
+                                <div>Log Out</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </td>
         </tr>
         <tr>
@@ -26,10 +52,62 @@
             </td>
             <!-- Main Content -->
             <td width="80%" valign="top">
-                <h2>Students</h2>
-                <p>Students page in progress...</p>
+                <div class="main-content">
+                    <h1>Students</h1>
+                    <div class="table-container">
+                        <!-- Plus Button -->
+                        <button class="plus-button" onclick="showModal()">+</button>
+                        <!-- Table of Students -->
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox"></th>
+                                    <th>Group</th>
+                                    <th>Name</th>
+                                    <th>Gender</th>
+                                    <th>Birthday</th>
+                                    <th>Status</th>
+                                    <th>Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Example student row -->
+                                <tr>
+                                    <td><input type="checkbox"></td>
+                                    <td>Group A</td>
+                                    <td>John Doe</td>
+                                    <td>Male</td>
+                                    <td>01/01/2000</td>
+                                    <td><span class="status-circle green-status"></span></td>
+                                    <td>
+                                        <button>Option 1</button>
+                                        <button>Option 2</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <button>←</button>
+                        <button>1</button>
+                        <button>2</button>
+                        <button>3</button>
+                        <button>→</button>
+                    </div>
+                </div>
             </td>
         </tr>
     </table>
+
+    <!-- Modal Window -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Add</div>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script> <!-- Link to the external JavaScript file -->
 </body>
 </html>
