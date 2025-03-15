@@ -1,9 +1,17 @@
-// Show the modal when the Add button is clicked
-function showModal() {
-    document.getElementById("modal").style.display = "flex";
+// Get modal element
+const modal = document.querySelector('.modal');
+
+// Function to open the modal
+function openModal() {
+    const modal = document.querySelector('.modal');
+    modal.style.display = 'flex'; // Show the modal
 }
 
-// Close the modal when the Close button is clicked
+// Function to close the modal
 function closeModal() {
-    document.getElementById("modal").style.display = "none";
+    const modal = document.querySelector('.modal');
+    modal.style.display = 'none'; // Hide the modal
 }
+
+// Example: Opening the modal when a button is clicked
+document.getElementById('plus-button').addEventListener('click', openModal);

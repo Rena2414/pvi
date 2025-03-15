@@ -100,17 +100,19 @@ body {
 
 .table-container {
     margin-top: 20px;
+    text-align: center;
 }
 
 /* Table */
 table {
     width: 100%;
     border-collapse: collapse;
+    text-align: center;
 }
 
 th, td {
     padding: 10px;
-    text-align: left;
+    text-align: center;
     border: 1px solid #ddd;
 }
 
@@ -158,7 +160,7 @@ th, td {
     background-color: #f4f4f4;
 }
 
-/* Modal Styling */
+/* Modal Styling 
 .modal {
     display: none;
     position: fixed;
@@ -187,4 +189,59 @@ th, td {
     color: #007BFF;
     border: none;
     background: none;
+}
+    */
+    /* Modal Background */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 20px;
+}
+
+.modal-footer button {
+    padding: 10px 15px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
+
+.modal-footer .cancel-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.modal-footer .create-btn {
+    background-color: #4CAF50;
+    color: white;
 }
