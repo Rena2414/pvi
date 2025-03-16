@@ -1,23 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.querySelector(".modal");
-    const plusButton = document.querySelector(".plus-button");
+    const openModalBtn = document.querySelector(".plus-button");
     const closeModalBtn = document.querySelector(".close-btn");
     const createBtn = document.querySelector(".create-btn");
     const studentsTable = document.querySelector("tbody");
+    const selectAllCheckbox = document.querySelector("thead input[type='checkbox']"); // Header checkbox
+    const checkboxes = document.querySelectorAll("tbody input[type='checkbox']"); // All checkboxes in student rows
 
-    let isEditing = false; // Flag to track whether we are editing or adding
-    let currentRow = null; // Track the row being edited
-
-    // Function to add event listeners to all rows
-    function addEventListenersToRows() {
-        const rows = studentsTable.querySelectorAll("tr");
-        rows.forEach(row => addRowEventListeners(row));
-    }
-
-    // Open Modal
-    plusButton.addEventListener("click", function () {
-        isEditing = false; // Reset to 'add' mode
-        modal.querySelector("h2").textContent = "Add Student"; // Change header to "Add Student"
+    // Open Modal for adding student
+    openModalBtn.addEventListener("click", function () {
         modal.style.display = "flex"; // Show the modal
     });
 
@@ -26,7 +17,29 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.style.display = "none"; // Hide the modal
     });
 
-    // Add or Edit Student
+
+    function addEditButtonEventListeners() {
+        const rows = document.querySelectorAll("tbody tr"); // Select all rows in the table
+    
+        rows.forEach(function (row) {
+            const editButton = row.querySelector(".edit-btn"); // Get the edit button in the row
+            if (editButton) {
+                editButton.addEventListener("click", function () {
+                    const firstName = row.querySelector("td:nth-child(3)").innerText.split(" ")[0]; // Extract first name
+                    const lastName = row.querySelector("td:nth-child(3)").innerText.split(" ")[1]; // Extract last name
+                    document.getElementById("first-name").value = firstName;
+                    document.getElementById("last-name").value = lastName;
+                    modal.style.display = "flex"; // Open modal with pre-filled data
+                    document.querySelector(".modal-header h2").innerText = "Edit Student"; // Change modal header
+                });
+            }
+        });
+    }
+
+    addEditButtonEventListeners();
+
+
+    // Add Student to Table
     createBtn.addEventListener("click", function () {
         const group = document.getElementById("group").value;
         const firstName = document.getElementById("first-name").value.trim();
@@ -40,47 +53,127 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (isEditing) {
-            // Edit existing student
-            currentRow.innerHTML = `
-                <td><input type="checkbox"></td>
-                <td>${group}</td>
-                <td>${firstName} ${lastName}</td>
-                <td>${gender}</td>
-                <td>${birthday}</td>
-                <td><span class="status-circle green-status"></span></td>
-                <td>
-                    <button class="edit-btn">Edit</button>
-                    <button class="delete-btn">Delete</button>
-                </td>
-            `;
-            addRowEventListeners(currentRow); // Reattach event listeners
-        } else {
-            // Add new student
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                <td><input type="checkbox"></td>
-                <td>${group}</td>
-                <td>${firstName} ${lastName}</td>
-                <td>${gender}</td>
-                <td>${birthday}</td>
-                <td><span class="status-circle green-status"></span></td>
-                <td>
-                    <button class="edit-btn">Edit</button>
-                    <button class="delete-btn">Delete</button>
-                </td>
-            `;
-            studentsTable.appendChild(newRow);
-            addRowEventListeners(newRow); // Attach event listeners to new row
-        }
+        // Create new row
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td><input type="checkbox"></td>
+            <td>${group}</td>
+            <td>${firstName} ${lastName}</td>
+            <td>${gender}</td>
+            <td>${birthday}</td>
+            <td><span class="status-circle green-status"></span></td>
+            <td>
+                <button class="edit-btn" disabled>Edit</button>
+                <button class="delete-btn" disabled>Delete</button>
+            </td>
+        `;
 
+        studentsTable.appendChild(newRow);
         modal.style.display = "none"; // Close modal
 
-        // Clear form fields after submission
+        // Clear form fields
         document.getElementById("first-name").value = "";
         document.getElementById("last-name").value = "";
         document.getElementById("birthday").value = "";
+
+        // Attach event listeners to new row
+        addRowEventListeners(newRow);
+        addCheckboxEventListeners(); // Reattach event listeners for checkboxes
     });
+
+    // Handle "select all" checkbox
+    selectAllCheckbox.addEventListener("change", function () {
+        const isChecked = selectAllCheckbox.checked;
+        document.querySelectorAll("tbody input[type='checkbox']").forEach(checkbox => checkbox.checked = isChecked);
+        toggleEditDeleteButtons(); // Update buttons when "select all" is toggled
+    });
+
+    // Handle individual checkboxes
+    function handleCheckboxChange() {
+        if (this.checked === false) {
+            selectAllCheckbox.checked = false; // Uncheck "select all" if any checkbox is unchecked
+        }
+        toggleEditDeleteButtons(); // Update buttons based on checkbox state
+    }
+
+    // Attach checkbox event listeners to all checkboxes
+    function addCheckboxEventListeners() {
+        document.querySelectorAll("tbody input[type='checkbox']").forEach(checkbox => {
+            checkbox.removeEventListener("change", handleCheckboxChange); // Remove old event listeners
+            checkbox.addEventListener("change", handleCheckboxChange); // Add new event listener
+        });
+    }
+
+    
+// Function to toggle "edit" and "delete" buttons based on checkbox state
+function toggleEditDeleteButtons() {
+    const selectedCheckboxes = document.querySelectorAll("tbody input[type='checkbox']:checked");
+    const editButtons = document.querySelectorAll(".edit-btn");
+
+    if (selectedCheckboxes.length > 1 || selectAllCheckbox.checked) {
+        editButtons.forEach(button => button.disabled = true); // Disable edit for all
+    } else {
+        editButtons.forEach(button => button.disabled = false); // Enable edit for all
+    }
+
+    // For each row, enable/disable delete button based on checkbox state
+    document.querySelectorAll("tbody tr").forEach((row) => {
+        const checkbox = row.querySelector("input[type='checkbox']");
+        const deleteBtn = row.querySelector(".delete-btn");
+        const editBtn = row.querySelector(".edit-btn");
+        // Enable delete button if the checkbox is checked in that row
+        if (checkbox.checked) {
+            deleteBtn.disabled = false; // Enable delete button for that row
+            if (!selectAllCheckbox.checked && selectedCheckboxes.length < 2){
+                editBtn.disabled = false;
+            }
+            
+        } else {
+            if (!selectAllCheckbox.checked && selectedCheckboxes.length < 2){
+                editBtn.disabled = true;
+            }
+            deleteBtn.disabled = true;
+        }
+    });
+}
+
+    // Delete selected student rows
+    document.querySelector(".delete-btn").addEventListener("click", function () {
+        document.querySelectorAll("tbody input[type='checkbox']:checked").forEach(checkbox => {
+            checkbox.closest('tr').remove();
+        });
+        toggleEditDeleteButtons(); // Update button states after deletion
+    });
+
+    // Edit student function (to be implemented)
+    function addRowEventListeners(row) {
+        const editBtn = row.querySelector(".edit-btn");
+        const deleteBtn = row.querySelector(".delete-btn");
+
+        editBtn.addEventListener("click", function () {
+            const firstName = row.querySelector("td:nth-child(3)").innerText.split(" ")[0]; // Extract first name
+            const lastName = row.querySelector("td:nth-child(3)").innerText.split(" ")[1]; // Extract last name
+            document.getElementById("first-name").value = firstName;
+            document.getElementById("last-name").value = lastName;
+            modal.style.display = "flex"; // Open modal with pre-filled data
+            document.querySelector(".modal-header h2").innerText = "Edit Student"; // Change modal header
+        });
+
+        deleteBtn.addEventListener("click", function () {
+            /*if(selectAllCheckbox.checked){
+                document.querySelectorAll("tbody tr").forEach(function (row) {
+                    row.remove(); // Remove each row from the table
+                });
+            }else{
+                    row.remove(); // Remove row from table
+            }*/
+            document.querySelectorAll("tbody input[type='checkbox']:checked").forEach(function (checkbox) {
+                const row = checkbox.closest('tr'); // Find the row that contains the checked checkbox
+                row.remove(); // Remove the row from the table
+            });
+
+        });
+    }
 
     // Close modal when clicking outside
     window.addEventListener("click", function (event) {
@@ -89,32 +182,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Function to add event listeners for edit and delete buttons
-    function addRowEventListeners(row) {
-        const editBtn = row.querySelector(".edit-btn");
-        const deleteBtn = row.querySelector(".delete-btn");
+    // Initial call to add checkbox event listeners
+    addCheckboxEventListeners();
+    toggleEditDeleteButtons(); // Initial button state setup
+});
 
-        editBtn.addEventListener("click", function () {
-            isEditing = true; // Set to 'edit' mode
-            currentRow = row; // Store the current row for editing
-            modal.querySelector("h2").textContent = "Edit Student"; // Change header to "Edit Student"
-
-            // Pre-populate modal fields with current row data
-            document.getElementById("group").value = row.cells[1].textContent;
-            const fullName = row.cells[2].textContent.split(" ");
-            document.getElementById("first-name").value = fullName[0];
-            document.getElementById("last-name").value = fullName[1];
-            document.getElementById("gender").value = row.cells[3].textContent.toLowerCase();
-            document.getElementById("birthday").value = row.cells[4].textContent;
-
-            modal.style.display = "flex"; // Show the modal
-        });
-
-        deleteBtn.addEventListener("click", function () {
-            row.remove(); // Remove the row
-        });
-    }
-
-    // Add event listeners to all existing rows on page load
-    addEventListenersToRows();
+// Toggle side panel when hamburger menu is clicked
+document.querySelector('.hamburger-menu').addEventListener('click', function () {
+    document.querySelector('.side-panel').classList.toggle('hidden');
 });
