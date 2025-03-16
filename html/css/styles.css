@@ -1,23 +1,32 @@
 body {
     margin: 0;
-    padding: 0;
+    padding-top: 60px; /* Matches header height to prevent overlap */
+    display: flex;
     font-family: Arial, sans-serif;
 }
 
 /* Header styling */
 .header {
+    width: 100%;
+    height: 60px; /* Adjust height as needed */
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: #333;
+    justify-content: space-between;
+    background-color: #007BFF; /* Blue theme */
     color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensures header is above everything */
+    padding: 0 10px; /* Reduced padding */
 }
 
 .logo {
     font-size: 24px;
     color: white;
     text-decoration: none;
+    margin-left: 10px; /* Adjusted margin */
+    text-align: left;
 }
 
 .user-info {
@@ -25,7 +34,6 @@ body {
     align-items: center;
 }
 
-/* Notification Bell Icon */
 /* Notification Bell Icon */
 .bell-icon {
     font-size: 30px;
@@ -101,7 +109,11 @@ body {
 
 .profile {
     display: flex;
-    align-items: center;
+    align-items: center; 
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    margin-right: 25px; 
 }
 
 .avatar {
@@ -128,14 +140,19 @@ body {
 
 /* Side Panel */
 .side-panel {
-    width: 250px;
-    background-color: #f4f4f4;
-    padding: 20px;
-    box-sizing: border-box;
+    width: 200px;
     height: 100vh;
+    background-color: #0056b3; /* Darker blue */
+    color: white;
     position: fixed;
-    top: 0;
+    top: 60px; /* Below header */
     left: 0;
+    transition: transform 0.3s ease-in-out;
+    padding: 20px; /* Added padding */
+}
+
+.side-panel.hidden {
+    transform: translateX(-100%);
 }
 
 .side-panel ul {
@@ -144,28 +161,60 @@ body {
 }
 
 .side-panel li {
-    margin: 10px 0;
+    margin: 15px 0; /* Increased margin */
 }
 
 .side-panel a {
     text-decoration: none;
-    color: black;
+    color: white;
     font-weight: normal;
     display: block;
+    padding: 10px; /* Added padding */
 }
 
 .side-panel a:hover {
-    color: #007BFF;
+    color: #cce5ff; /* Lighter blue for hover */
 }
 
 .side-panel b {
     font-weight: bold;
 }
 
-/* Main Content */
+/* Main Content Area */
 .main-content {
-    margin-left: 270px;
+    flex-grow: 1;
+    margin-left: 250px; /* Offset for side panel */
     padding: 20px;
+}
+
+/* Adjust when the side panel is hidden */
+.side-panel.hidden + .main-content {
+    margin-left: 0;
+}
+
+/* Hamburger Button */
+.hamburger-menu {
+    font-size: 30px;
+    cursor: pointer;
+    margin-left: 0; /* Adjusted margin */
+}
+
+/* Show hamburger button on smaller screens */
+@media (max-width: 768px) {
+    .hamburger-menu {
+        display: block;
+    }
+
+    .side-panel {
+        width: 200px;
+        position: fixed;
+        top: 60px;
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
 }
 
 .table-container {
@@ -230,7 +279,7 @@ th, td {
     background-color: #f4f4f4;
 }
 
-    /* Modal Background */
+/* Modal Background */
 .modal {
     display: none; /* Hidden by default */
     position: fixed;
