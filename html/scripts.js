@@ -1,3 +1,35 @@
+let studentsToDelete = [];
+
+function showDeleteModal() {
+    const modal = document.getElementById("delete-confirmation-modal");
+    const modalText = document.getElementById("delete-modal-text");
+
+    if (studentsToDelete.length === 1) {
+        // Assuming the student's name is in the second column (adjust index if needed)
+        const studentName = studentsToDelete[0].querySelector("td:nth-child(3)").textContent.trim();
+        modalText.textContent = `Do you really want to delete ${studentName}?`;
+    } else {
+        modalText.textContent = "Do you really want to delete students?";
+    }
+
+    modal.style.display = "flex"; 
+}
+
+// ✅ Now only closes modal without removing anything
+function closeDeleteModal() {
+    document.getElementById("delete-confirmation-modal").style.display = "none";
+    studentsToDelete = []; // Clear list
+}
+
+// ✅ Now only allows removal if user confirms
+function confirmDelete() {
+    studentsToDelete.forEach(row => row.remove());
+    closeDeleteModal();
+}
+
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.querySelector(".modal");
     const openModalBtn = document.querySelector(".plus-button");
@@ -6,6 +38,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const studentsTable = document.querySelector("tbody");
     const selectAllCheckbox = document.querySelector("thead input[type='checkbox']"); // Header checkbox
     const checkboxes = document.querySelectorAll("tbody input[type='checkbox']"); // All checkboxes in student rows
+
+
+ 
 
     // Open Modal for adding student
     openModalBtn.addEventListener("click", function () {
@@ -17,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.style.display = "none"; // Hide the modal
     });
 
+    
 
     function addEditButtonEventListeners() {
         const rows = document.querySelectorAll("tbody tr"); // Select all rows in the table
@@ -36,8 +72,52 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    addEditButtonEventListeners();
 
+// Function to update studentsToDelete based on checked checkboxes
+function updateStudentsToDelete() {
+    const checkedRows = document.querySelectorAll("tbody input[type='checkbox']:checked");
+    if (checkedRows.length > 0) {
+        studentsToDelete = Array.from(checkedRows).map(checkbox => checkbox.closest('tr'));
+    } else {
+        studentsToDelete = [];
+    }
+}
+
+
+// Attach event listener to the tbody to handle dynamically added checkboxes
+document.querySelector('tbody').addEventListener('change', function(e) {
+    if (e.target && e.target.type === 'checkbox') {
+        updateStudentsToDelete();
+    }
+});
+
+
+    function addDeleteButtonEventListeners() {
+        const rows = document.querySelectorAll("tbody tr"); // Select all rows in the table
+    
+        rows.forEach(function (row) {
+            const deleteButton = row.querySelector(".delete-btn"); // Get the delete button in the row
+            if (deleteButton) {
+                deleteButton.addEventListener("click", function () { // Attach event listener
+                    if (selectAllCheckbox.checked) {
+                        // If "select all" is checked, mark all rows for deletion
+                        studentsToDelete = Array.from(document.querySelectorAll("tbody tr"));
+                        showDeleteModal();
+                    } else {
+                        const checkedRows = document.querySelectorAll("tbody input[type='checkbox']:checked");
+                        if (checkedRows.length > 0) {
+                            // If specific rows are checked, mark those for deletion
+                            studentsToDelete = Array.from(checkedRows).map(checkbox => checkbox.closest('tr'));
+                            showDeleteModal();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    addEditButtonEventListeners();
+    addDeleteButtonEventListeners();
 
     // Add Student to Table
     createBtn.addEventListener("click", function () {
@@ -138,12 +218,12 @@ function toggleEditDeleteButtons() {
 }
 
     // Delete selected student rows
-    document.querySelector(".delete-btn").addEventListener("click", function () {
+    /*document.querySelector(".delete-btn").addEventListener("click", function () {
         document.querySelectorAll("tbody input[type='checkbox']:checked").forEach(checkbox => {
             checkbox.closest('tr').remove();
         });
         toggleEditDeleteButtons(); // Update button states after deletion
-    });
+    });*/
 
     // Edit student function (to be implemented)
     function addRowEventListeners(row) {
@@ -159,21 +239,51 @@ function toggleEditDeleteButtons() {
             document.querySelector(".modal-header h2").innerText = "Edit Student"; // Change modal header
         });
 
-        deleteBtn.addEventListener("click", function () {
-            /*if(selectAllCheckbox.checked){
+
+
+        /*deleteBtn.addEventListener("click", function () {
+            if(selectAllCheckbox.checked){
                 document.querySelectorAll("tbody tr").forEach(function (row) {
                     row.remove(); // Remove each row from the table
                 });
             }else{
                     row.remove(); // Remove row from table
-            }*/
+            }
             document.querySelectorAll("tbody input[type='checkbox']:checked").forEach(function (checkbox) {
                 const row = checkbox.closest('tr'); // Find the row that contains the checked checkbox
                 row.remove(); // Remove the row from the table
             });
 
-        });
+        });*/
+
+
+// Delete button logic
+deleteBtn.addEventListener("click", function () {
+    if (selectAllCheckbox.checked) {
+        studentsToDelete = Array.from(document.querySelectorAll("tbody tr"));
+        showDeleteModal();
+    } else {
+        updateStudentsToDelete();  // Update studentsToDelete before showing the modal
+        if (studentsToDelete.length > 0) {
+            showDeleteModal();
+        } else {
+            alert("No students selected for deletion.");
+        }
     }
+});
+        
+       
+        
+        // ✅ Add event listeners (prevents multiple bindings)
+        document.querySelector(".delete-confirm-btn").addEventListener("click", confirmDelete);
+        document.querySelector(".delete-cancel-btn").addEventListener("click", closeDeleteModal);
+        
+
+
+
+    }
+
+    
 
     // Close modal when clicking outside
     window.addEventListener("click", function (event) {
@@ -191,3 +301,4 @@ function toggleEditDeleteButtons() {
 document.querySelector('.hamburger-menu').addEventListener('click', function () {
     document.querySelector('.side-panel').classList.toggle('hidden');
 });
+

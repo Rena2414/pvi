@@ -286,6 +286,71 @@ th, td {
 }
 
 /* Modal Background */
+.Delmodal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Box */
+.Delmodal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center;
+}
+
+/* Modal Header */
+.Delmodal-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+/* Modal Footer (Buttons) */
+.Delmodal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+/* Cancel Button */
+.cancel-btn {
+    background: gray;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background: darkgray;
+}
+
+/* Confirm Button */
+.confirm-btn {
+    background: red;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background: darkred;
+}
+
+
+/* Modal Background */
 .modal {
     display: none; /* Hidden by default */
     position: fixed;
