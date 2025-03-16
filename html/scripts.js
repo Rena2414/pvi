@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const modal = document.querySelector(".modal");
     const openModalBtn = document.querySelector(".plus-button");
     const closeModalBtn = document.querySelector(".close-btn");
+    const DelcloseModalBtn = document.querySelector(".Delclose-btn");
     const createBtn = document.querySelector(".create-btn");
     const studentsTable = document.querySelector("tbody");
     const selectAllCheckbox = document.querySelector("thead input[type='checkbox']"); // Header checkbox
@@ -52,6 +53,9 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.style.display = "none"; // Hide the modal
     });
 
+    DelcloseModalBtn.addEventListener("click", function () {
+        closeDeleteModal();
+    });
     
 
     function addEditButtonEventListeners() {
