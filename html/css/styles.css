@@ -210,6 +210,11 @@ body {
         position: fixed;
         top: 60px;
         left: 0;
+        transform: translateX(-100%);
+    }
+
+    .side-panel.hidden {
+        transform: translateX(0); /* Show the panel when toggled */
     }
 
     .main-content {
