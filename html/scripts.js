@@ -308,12 +308,15 @@ document.querySelector('.hamburger-menu').addEventListener('click', function () 
 
 document.querySelector('.plane-icon').addEventListener('dblclick', function() {
     this.classList.add('animate');
-
-    // Show the notification circle permanently
     document.getElementById('notification-circle').style.opacity = 1;
+    document.querySelector('.notifications').classList.add('no-hover');
 
-    // Reset animation only (not the notification circle)
     setTimeout(() => {
         this.classList.remove('animate');
     }, 500);
+
+    // Re-enable hover effect after 5 seconds
+    setTimeout(() => {
+        document.querySelector('.notifications').classList.remove('no-hover');
+    }, 750);
 });

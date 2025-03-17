@@ -94,7 +94,7 @@ body {
     position: absolute;
     top: 50px;
     right: 0;
-    width: 300px; /* Increased size for dropdown */
+    width: 300px;
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -103,9 +103,15 @@ body {
     padding: 10px;
     z-index: 10;
 }
-/* Show dropdown when hovering over the bell icon */
+
+/* Default hover behavior */
 .notifications:hover .dropdown {
     display: block;
+}
+
+/* Disable hover effect when 'no-hover' class is added */
+.notifications.no-hover:hover .dropdown {
+    display: none !important;
 }
 
 
