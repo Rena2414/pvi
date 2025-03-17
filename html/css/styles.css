@@ -61,10 +61,41 @@ body {
     padding: 10px;
     z-index: 10;
 }
-
 /* Show dropdown when hovering over the bell icon */
 .notifications:hover .dropdown {
     display: block;
+}
+
+
+.dropdown2 {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    width: 120px; /* Increased size for dropdown */
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    z-index: 10;
+    color: black; /* Ensure text color is black */
+    font-size: 14px; /* Adjust font size if needed */
+}
+
+
+
+.profile:hover .dropdown2 {
+    display: block; 
+    right: auto; 
+}
+
+.dropdown2 div:hover {
+    border-radius: 1.1vh;
+    transition: background-color 0.3s;
+    background-color: #eaf4ff;
+    cursor: pointer; 
 }
 
 /* Message Box Styling */
@@ -126,7 +157,8 @@ body {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-color: #ccc;
+    background-image: url("assets/images/gameModelRender.png") !important;
+    background-size: cover;
     margin-right: 10px;
 }
 
