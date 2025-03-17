@@ -14,17 +14,17 @@ body {
 /* Header styling */
 .header {
     width: 100%;
-    height: 60px; /* Adjust height as needed */
+    height: 60px; 
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #007BFF; /* Blue theme */
+    background-color: #009dff; 
     color: white;
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1000; /* Ensures header is above everything */
-    padding: 0 10px; /* Reduced padding */
+    z-index: 1000; 
+    padding: 0 10px; 
 }
 
 .logo {
@@ -180,13 +180,13 @@ body {
 .side-panel {
     width: 200px;
     height: 100vh;
-    background-color: #0056b3; /* Darker blue */
+    background-color: #015396; 
     color: white;
     position: fixed;
-    top: 60px; /* Below header */
+    top: 60px; 
     left: 0;
     transition: transform 0.3s ease-in-out;
-    padding: 20px; /* Added padding */
+    padding: 20px; 
 }
 
 .side-panel.hidden {
@@ -196,6 +196,12 @@ body {
 .side-panel ul {
     list-style-type: none;
     padding: 0;
+}
+
+.side-panel li:hover {
+    transform: scale(1.1); /* Enlarge the link */
+    font-size: 20px; /* Increase font size */
+    color: #eaf4ff; /* Change color on hover */
 }
 
 .side-panel li {
@@ -209,11 +215,6 @@ body {
     display: block;
     padding: 10px; /* Added padding */
 }
-
-.side-panel a:hover {
-    color: #cce5ff; /* Lighter blue for hover */
-}
-
 .side-panel b {
     font-weight: bold;
 }
