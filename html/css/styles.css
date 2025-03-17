@@ -31,7 +31,7 @@ body {
     font-size: 24px;
     color: white;
     text-decoration: none;
-    margin-left: 10px; /* Adjusted margin */
+    margin-left: 10px;
     text-align: left;
 }
 
@@ -245,25 +245,25 @@ table {
 th, td {
     padding: 10px;
     text-align: center;
-    border: 1px solid #ddd;
+    border: 1px solid #bfdcfd;
     border-collapse: separate;
     /*overflow: hidden;*/
 }
 
 thead tr:first-child td:first-child {
-    border-top-left-radius: 50px;
+    border-top-left-radius: 1.5vh;
 }
 
 thead tr:first-child td:last-child {
-    border-top-right-radius: 50px;
+    border-top-right-radius: 1.5vh;
 }
 
 tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 50px;
+    border-bottom-left-radius: 1.5vh;
 }
 
 tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 50px;
+    border-bottom-right-radius: 1.5vh;
 }
 
 .plus-button {
@@ -272,6 +272,7 @@ tbody tr:last-child td:last-child {
     right: 20px; /* 20px from the right */
     padding: 10px 15px;
     background-color: #007BFF;
+    border-radius: 1.1vh;
     color: white;
     border: none;
     cursor: pointer;
@@ -289,7 +290,11 @@ tbody tr:last-child td:last-child {
 }
 
 .green-status {
-    background-color: green;
+    background-color: rgb(167, 255, 99);
+}
+
+.grey-status {
+    background-color: rgb(120, 120, 120);
 }
 
 /* Pagination */
@@ -301,7 +306,8 @@ tbody tr:last-child td:last-child {
 .pagination button {
     padding: 5px 10px;
     margin: 0 5px;
-    border: 1px solid #ddd;
+    border: 1px solid #bfdcfd;
+    border-radius: 1.1vh;
     background-color: #fff;
     cursor: pointer;
 }
