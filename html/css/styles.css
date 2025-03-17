@@ -93,8 +93,8 @@ body {
     display: none;
     position: absolute;
     top: 50px;
-    right: 0;
-    width: 300px;
+    right: 0px;
+    width: 350px;
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -158,7 +158,7 @@ body {
 
 /* Remove the background color and box shadow */
 .message:hover {
-    background-color: #e1e1e1;
+    background-color: #eaf4ff;
 }
 
 .message .avatar {
@@ -206,6 +206,34 @@ body {
     height: 30px;
     border-radius: 50%;
     background-image: url("assets/images/gameModelRender.png") !important;
+    background-size: cover;
+    margin-right: 10px;
+}
+
+.avatar2 {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-image: url("assets/images/pohoda.png") !important;
+    background-size: cover;
+    margin-right: 10px;
+}
+
+
+.avatar3 {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-image: url("assets/images/sherlock.jpg") !important;
+    background-size: cover;
+    margin-right: 10px;
+}
+
+.avatar4 {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-image: url("assets/images/cat.jpg") !important;
     background-size: cover;
     margin-right: 10px;
 }
@@ -317,6 +345,26 @@ body {
     padding: 10px;
 }
 
+.edit-btn, .delete-btn {
+    width: 25px;
+    height: 25px;
+    background-color: #009dff;
+    border-radius: 1.1vh;
+    border: none;
+    cursor: pointer;
+    background-size: 60%; 
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.edit-btn {
+    background-image: url("assets/images/edit.png");
+}
+
+.delete-btn {
+    background-image: url("assets/images/delete.png");
+}
+
 /* Table */
 table {
     width: 100%;
@@ -352,7 +400,7 @@ tbody tr:last-child td:last-child {
     top: 100px; /* 20px from the bottom */
     right: 20px; /* 20px from the right */
     padding: 10px 15px;
-    background-color: #007BFF;
+    background-color: #009dff;
     border-radius: 1.1vh;
     color: white;
     border: none;
