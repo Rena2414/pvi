@@ -41,8 +41,13 @@ body {
 }
 
 /* Notification Bell Icon */
-.bell-icon {
-    font-size: 30px;
+.plane-icon {
+    width: 30px;
+    height: 30px;
+    background-image: url("assets/images/plane.png"); /* Path to your icon */
+    background-size: cover; /* Ensures the image covers the whole area */
+    background-position: center; /* Centers the image inside the element */
+    display: inline-block; /* Makes it behave like a span element */
     cursor: pointer;
 }
 
