@@ -357,6 +357,13 @@ body {
     background-repeat: no-repeat;
 }
 
+.edit-btn:disabled, .delete-btn:disabled {
+    background-color: #eaf4ff; /* Gray color for disabled state */
+    cursor: not-allowed; 
+    /*filter: brightness(0.7);  Darken image for disabled state */
+}
+
+
 .edit-btn {
     background-image: url("assets/images/edit.png");
 }
