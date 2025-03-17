@@ -229,16 +229,16 @@ body {
     }
 }
 
-
 .table-container {
     margin-top: 20px;
     text-align: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
 }
 
 /* Table */
 table {
     width: 100%;
-    border-collapse: collapse;
     text-align: center;
 }
 
@@ -246,6 +246,24 @@ th, td {
     padding: 10px;
     text-align: center;
     border: 1px solid #ddd;
+    border-collapse: separate;
+    /*overflow: hidden;*/
+}
+
+thead tr:first-child td:first-child {
+    border-top-left-radius: 50px;
+}
+
+thead tr:first-child td:last-child {
+    border-top-right-radius: 50px;
+}
+
+tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 50px;
+}
+
+tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 50px;
 }
 
 .plus-button {
