@@ -3,6 +3,12 @@ body {
     padding-top: 60px; /* Matches header height to prevent overlap */
     display: flex;
     font-family: Arial, sans-serif;
+    background-image: url("assets/images/Background.png") !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100vh; 
 }
 
 /* Header styling */
@@ -185,6 +191,7 @@ body {
     flex-grow: 1;
     margin-left: 250px; /* Offset for side panel */
     padding: 20px;
+
 }
 
 /* Adjust when the side panel is hidden */
