@@ -306,3 +306,14 @@ document.querySelector('.hamburger-menu').addEventListener('click', function () 
     document.querySelector('.side-panel').classList.toggle('hidden');
 });
 
+document.querySelector('.plane-icon').addEventListener('dblclick', function() {
+    this.classList.add('animate');
+
+    // Show the notification circle permanently
+    document.getElementById('notification-circle').style.opacity = 1;
+
+    // Reset animation only (not the notification circle)
+    setTimeout(() => {
+        this.classList.remove('animate');
+    }, 500);
+});

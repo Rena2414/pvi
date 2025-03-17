@@ -45,17 +45,54 @@ body {
     width: 30px;
     height: 30px;
     background-image: url("assets/images/plane.png"); /* Path to your icon */
-    background-size: cover; /* Ensures the image covers the whole area */
-    background-position: center; /* Centers the image inside the element */
-    display: inline-block; /* Makes it behave like a span element */
+    background-size: cover;
+    background-position: center;
+    display: inline-block;
     cursor: pointer;
 }
+
+.notificationsIcon {
+    position: relative; /* Makes the parent the reference for positioning */
+    display: inline-block; /* Prevents it from taking full width */
+}
+
+/* Add animation to the plane icon */
+@keyframes bounce {
+    0% {
+        transform: translate(5px, 5px); /* Start a bit right and lower */
+    }
+    100% {
+        transform: translate(-5px, -5px); /* End a bit to the left and higher */
+    }
+}
+
+/* Apply the animation to the plane icon when it's triggered */
+.plane-icon.animate {
+    animation: bounce 0.5s ease; /* 0.5s for the animation duration */
+}
+
+
+.notification-circle {
+    position: absolute;
+    top: -5px; /* Adjusted positioning */
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Show the red circle after the animation */
+
+
 
 /* Notification Dropdown */
 .dropdown {
     display: none;
     position: absolute;
-    top: 35px;
+    top: 50px;
     right: 0;
     width: 300px; /* Increased size for dropdown */
     background-color: white;
@@ -75,7 +112,7 @@ body {
 .dropdown2 {
     display: none;
     position: absolute;
-    top: 35px;
+    top: 50px;
     right: 0;
     width: 120px; /* Increased size for dropdown */
     background-color: white;
