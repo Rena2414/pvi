@@ -8,7 +8,7 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     width: 100%;
-    height: 100vh; 
+    height: 100%; 
 }
 
 /* Header styling */
@@ -94,11 +94,12 @@ body {
     position: absolute;
     top: 50px;
     right: 0px;
-    width: 350px;
+    width: 50%;
+    max-width: 350px;
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    max-height: 400px;
+    max-height: min(400px, 80vh);;
     overflow-y: auto;
     padding: 10px;
     z-index: 10;
