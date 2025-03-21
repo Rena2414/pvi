@@ -320,3 +320,28 @@ document.querySelector('.plane-icon').addEventListener('dblclick', function() {
         document.querySelector('.notifications').classList.remove('no-hover');
     }, 750);
 });
+
+function closeModal() {
+    document.querySelector(".modal").style.display = "none";
+}
+
+
+function openModal() {
+    document.querySelector(".modal").style.display = "block";
+}
+
+
+let clickTimer = null;
+
+document.querySelector(".plane-icon").addEventListener("click", function () {
+    if (clickTimer) {
+        clearTimeout(clickTimer); // Cancel single-click action if double-click is detected
+        clickTimer = null;
+        return;
+    }
+
+    clickTimer = setTimeout(() => {
+        window.location.href = "messages.html"; // Single click action
+        clickTimer = null;
+    }, 300); // Adjust the timeout if needed
+});

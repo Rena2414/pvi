@@ -59,10 +59,10 @@ body {
 /* Add animation to the plane icon */
 @keyframes bounce {
     0% {
-        transform: translate(5px, 5px); /* Start a bit right and lower */
+        transform: translate(10px, 10px); /* Start a bit right and lower */
     }
     100% {
-        transform: translate(-5px, -5px); /* End a bit to the left and higher */
+        transform: translate(-10px, -10px); /* End a bit to the left and higher */
     }
 }
 
@@ -480,6 +480,15 @@ tbody tr:last-child td:last-child {
 .Delmodal-header h3 {
     margin: 0;
     font-size: 20px;
+    position: relative;
+}
+
+.Delmodal-header {
+    position: relative; /* Ensures the button is positioned relative to this div */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
 }
 
 /* Modal Footer (Buttons) */
@@ -489,36 +498,101 @@ tbody tr:last-child td:last-child {
     margin-top: 15px;
 }
 
-/* Cancel Button */
-.cancel-btn {
-    background: gray;
+.delete-cancel-btn, .delete-confirm-btn{
+    background: #009dff;
+    border-radius: 1.2vh;
     color: white;
-    padding: 8px 15px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    width: 120px;
+    height: 30px;
 }
 
-.cancel-btn:hover {
-    background: darkgray;
+.delete-cancel-btn:hover, .delete-confirm-btn:hover{
+    background: #0056b3;
 }
 
-/* Confirm Button */
-.confirm-btn {
-    background: red;
+.Delclose-btn{
+    position: absolute;
+    right: 10px;
+    background: #009dff;
+    border-radius: 1.2vh;
     color: white;
-    padding: 8px 15px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    width: 20px;
+    height: 20px;
 }
 
-.confirm-btn:hover {
-    background: darkred;
+.Delclose-btn:hover{
+    background: #0056b3;
+}
+
+
+.modal-header{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.close-btn{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #009dff;
+    border-radius: 1.2vh;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+}
+
+.close-btn:hover{
+    background: #0056b3;
+}
+
+.cancel-btn, .create-btn{
+    background: #009dff;
+    border-radius: 1.2vh;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 120px;
+    height: 30px;
+}
+
+.cancel-btn:hover, .create-btn:hover{
+    background: #0056b3;
 }
 
 
 /* Modal Background */
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Adds space between rows */
+}
+
+.modal-body div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px; /* Adds space between label and input */
+}
+
+.modal-body label {
+    min-width: 100px; /* Ensures labels have a consistent width */
+    text-align: left;
+}
+
+.modal-body input,
+.modal-body select {
+    flex-grow: 1; /* Makes inputs take available space */
+}
+
 .modal {
     display: none; /* Hidden by default */
     position: fixed;
@@ -557,18 +631,3 @@ tbody tr:last-child td:last-child {
     padding-top: 20px;
 }
 
-.modal-footer button {
-    padding: 10px 15px;
-    cursor: pointer;
-    border: 1px solid #ddd;
-}
-
-.modal-footer .cancel-btn {
-    background-color: #f44336;
-    color: white;
-}
-
-.modal-footer .create-btn {
-    background-color: #4CAF50;
-    color: white;
-}
