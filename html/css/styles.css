@@ -4,7 +4,7 @@ html, body {
 
 body {
     margin: 0;
-    padding-top: 60px; /* Matches header height to prevent overlap */
+    padding-top: 60px; 
     display: flex;
     font-family: Arial, sans-serif;
     background-image: url("assets/images/Background.png");
@@ -44,11 +44,10 @@ body {
     align-items: center;
 }
 
-/* Notification Bell Icon */
 .plane-icon {
     width: 30px;
     height: 30px;
-    background-image: url("assets/images/plane.png"); /* Path to your icon */
+    background-image: url("assets/images/plane.png"); 
     background-size: cover;
     background-position: center;
     display: inline-block;
@@ -56,39 +55,38 @@ body {
 }
 
 .notificationsIcon {
-    position: relative; /* Makes the parent the reference for positioning */
-    display: inline-block; /* Prevents it from taking full width */
+    position: relative; 
+    display: inline-block; 
 }
 
 /* Add animation to the plane icon */
 @keyframes bounce {
     0% {
-        transform: translate(10px, 10px); /* Start a bit right and lower */
+        transform: translate(10px, 10px); 
     }
     100% {
-        transform: translate(-10px, -10px); /* End a bit to the left and higher */
+        transform: translate(-10px, -10px); 
     }
 }
 
-/* Apply the animation to the plane icon when it's triggered */
 .plane-icon.animate {
-    animation: bounce 0.5s ease; /* 0.5s for the animation duration */
+    animation: bounce 0.5s ease; 
 }
 
 
 .notification-circle {
     position: absolute;
-    top: -5px; /* Adjusted positioning */
+    top: -5px; 
     right: -5px;
     width: 10px;
     height: 10px;
     background-color: red;
     border-radius: 50%;
-    opacity: 0; /* Initially hidden */
+    opacity: 0; 
     transition: opacity 0.3s ease-in-out;
 }
 
-/* Show the red circle after the animation */
+
 
 
 
@@ -109,23 +107,22 @@ body {
     z-index: 10;
 }
 
-/* Default hover behavior */
 .notifications:hover .dropdown {
     display: block;
 }
 
-/* Disable hover effect when 'no-hover' class is added */
 .notifications.no-hover:hover .dropdown {
     display: none;
 }
 
 
+/* Profile Dropdown */
 .dropdown2 {
     display: none;
     position: absolute;
     top: 50px;
     right: 0;
-    width: 120px; /* Increased size for dropdown */
+    width: 120px; 
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -133,11 +130,9 @@ body {
     overflow-y: auto;
     padding: 10px;
     z-index: 10;
-    color: black; /* Ensure text color is black */
-    font-size: 14px; /* Adjust font size if needed */
+    color: black; 
+    font-size: 14px; 
 }
-
-
 
 .profile:hover .dropdown2 {
     display: block; 
@@ -151,6 +146,8 @@ body {
     cursor: pointer; 
 }
 
+
+
 /* Message Box Styling */
 .message {
     display: flex;
@@ -161,7 +158,6 @@ body {
     transition: background-color 0.3s;
 }
 
-/* Remove the background color and box shadow */
 .message:hover {
     background-color: #eaf4ff;
 }
@@ -175,7 +171,6 @@ body {
     background-position: center;
 }
 
-/* Removed background color and shadow */
 .message .message-content {
     display: flex;
     flex-direction: column;
@@ -280,13 +275,13 @@ body {
 }
 
 .side-panel li:hover {
-    transform: scale(1.1); /* Enlarge the link */
-    font-size: 20px; /* Increase font size */
-    color: #eaf4ff; /* Change color on hover */
+    transform: scale(1.1); 
+    font-size: 20px; 
+    color: #eaf4ff; 
 }
 
 .side-panel li {
-    margin: 15px 0; /* Increased margin */
+    margin: 15px 0;
 }
 
 .side-panel a {
@@ -294,33 +289,32 @@ body {
     color: white;
     font-weight: normal;
     display: block;
-    padding: 10px; /* Added padding */
+    padding: 10px; 
 }
 .side-panel b {
     font-weight: bold;
 }
 
-/* Main Content Area */
+
+
+
+/* Main content style */
 .main-content {
     flex-grow: 1;
-    margin-left: 230px; /* Offset for side panel */
+    margin-left: 230px; 
     padding: 20px;
 
 }
 
-/* Adjust when the side panel is hidden */
 .side-panel.hidden + .main-content {
     margin-left: 0;
 }
 
-/* Hamburger Button */
 .hamburger-menu {
     font-size: 30px;
     cursor: pointer;
-    margin-left: 0; /* Adjusted margin */
+    margin-left: 0; 
 }
-
-
 
 .table-container {
     margin-top: 20px;
@@ -342,17 +336,15 @@ body {
 }
 
 .edit-btn:disabled, .delete-btn:disabled {
-    background-color: #eaf4ff; /* Gray color for disabled state */
+    background-color: #eaf4ff; 
     cursor: not-allowed; 
     pointer-events: none;
-    /*filter: brightness(0.7);  Darken image for disabled state */
+
 }
 
 .edit-btn:hover, .delete-btn:hover {
     background-color: #003E80;
 }
-
-
 
 .edit-btn {
     background-image: url("assets/images/edit.png");
@@ -400,9 +392,8 @@ tbody tr:last-child td:last-child {
     font-size: 16px; 
 }
 
-
 .plus-button {
-    position: absolute; /* Position inside the table container */
+    position: absolute; 
     top: 100px; 
     right: 20px; 
     padding: 0; 
@@ -438,7 +429,6 @@ tbody tr:last-child td:last-child {
     background-color: rgb(120, 120, 120);
 }
 
-/* Pagination */
 .pagination {
     margin-top: 20px;
     text-align: center;
@@ -457,7 +447,7 @@ tbody tr:last-child td:last-child {
     background-color: #f4f4f4;
 }
 
-/* Modal Background */
+
 .Delmodal {
     display: none;
     position: fixed;
@@ -465,12 +455,12 @@ tbody tr:last-child td:last-child {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background: rgba(0, 0, 0, 0.5); 
     justify-content: center;
     align-items: center;
 }
 
-/* Modal Box */
+/* Delete Modal Box */
 .Delmodal-content {
     background: white;
     padding: 20px;
@@ -480,7 +470,7 @@ tbody tr:last-child td:last-child {
     text-align: center;
 }
 
-/* Modal Header */
+
 .Delmodal-header h3 {
     margin: 0;
     font-size: 20px;
@@ -488,14 +478,14 @@ tbody tr:last-child td:last-child {
 }
 
 .Delmodal-header {
-    position: relative; /* Ensures the button is positioned relative to this div */
+    position: relative; 
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px;
 }
 
-/* Modal Footer (Buttons) */
+
 .Delmodal-footer {
     display: flex;
     justify-content: space-between;
@@ -578,40 +568,39 @@ tbody tr:last-child td:last-child {
 .modal-body {
     display: flex;
     flex-direction: column;
-    margin: 15px; /* Adds space between rows */
+    margin: 15px; 
 }
 
 .modal-body div {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 10px; /* Adds space between label and input */
+    margin: 10px; 
 }
 
 .modal-body label {
-    min-width: 100px; /* Ensures labels have a consistent width */
+    min-width: 100px; 
     text-align: left;
 }
 
 .modal-body input,
 .modal-body select {
-    flex-grow: 1; /* Makes inputs take available space */
+    flex-grow: 1; 
 }
 
 .modal {
-    display: none; /* Hidden by default */
+    display: none; 
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
-/* Modal Content */
 .modal-content {
     background-color: white;
     padding: 20px;

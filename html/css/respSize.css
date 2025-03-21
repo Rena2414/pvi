@@ -28,7 +28,7 @@
     }
 
     .side-panel.hidden {
-        transform: translateX(0); /* Show the panel when toggled */
+        transform: translateX(0); 
     }
 
     .main-content {
