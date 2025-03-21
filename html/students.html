@@ -8,15 +8,12 @@
     <link rel="stylesheet" href="css/respSize.css">
 </head>
 <body>
-
-
     <!-- Upper Panel -->
     <div class="header">
+
         <div class="hamburger-menu">☰
             <a href="students.html" class="logo">CMS</a>
         </div>
-
-        
 
         <div class="user-info">
             <div class="notifications">
@@ -26,6 +23,7 @@
                     <div id="notification-circle" class="notification-circle"></div>
                 </div>
 
+                <!--Message dropdown-->
                     <div class="dropdown">
                         <div class="message">
                             <div class="avatar2"></div>
@@ -50,10 +48,12 @@
                                 </div>
                             </div>
                         </div>
-            <div class="profile">
 
+            <div class="profile">
                 <span class="avatar"></span>
                 <p>Iryna Luchyn</p>
+
+                <!--Profile dropdown-->
                 <div class="dropdown2">
                     <div>Profile</div>
                     <div>Log Out</div>
@@ -79,6 +79,7 @@
     <div class="main-content">
         <h1>Students</h1>
         <button class="plus-button" onclick="openModal()">+</button>
+
         <div class="table-container">
             <table>
                 <thead>
@@ -143,8 +144,9 @@
                     </tr>
                 </tbody>
             </table>
-
         </div>
+
+
         <!-- Pagination -->
         <div class="pagination">
             <button >←</button>
@@ -153,9 +155,11 @@
             <button>3</button>
             <button>→</button>
         </div>
-    </div>
-<!--Delete modal-->
 
+    </div>
+
+
+<!--Delete modal-->
 <div id="delete-confirmation-modal" class="Delmodal">
     <div class="Delmodal-content">
         <div class="Delmodal-header">
@@ -216,6 +220,8 @@
         </div>
     </div>
 </div>
+
+
 <script src="scripts.js"></script>    
 </body>
 </html>

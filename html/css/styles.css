@@ -7,7 +7,7 @@ body {
     padding-top: 60px; /* Matches header height to prevent overlap */
     display: flex;
     font-family: Arial, sans-serif;
-    background-image: url("assets/images/Background.png") !important;
+    background-image: url("assets/images/Background.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -97,7 +97,7 @@ body {
     display: none;
     position: absolute;
     top: 50px;
-    right: 0px;
+    right: 0;
     width: 50%;
     max-width: 350px;
     background-color: white;
@@ -116,7 +116,7 @@ body {
 
 /* Disable hover effect when 'no-hover' class is added */
 .notifications.no-hover:hover .dropdown {
-    display: none !important;
+    display: none;
 }
 
 
@@ -210,7 +210,7 @@ body {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-image: url("assets/images/gameModelRender.png") !important;
+    background-image: url("assets/images/gameModelRender.png");
     background-size: cover;
     margin-right: 10px;
 }
@@ -219,7 +219,7 @@ body {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-image: url("assets/images/pohoda.png") !important;
+    background-image: url("assets/images/pohoda.png");
     background-size: cover;
     margin-right: 10px;
 }
@@ -229,7 +229,7 @@ body {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-image: url("assets/images/sherlock.jpg") !important;
+    background-image: url("assets/images/sherlock.jpg");
     background-size: cover;
     margin-right: 10px;
 }
@@ -238,7 +238,7 @@ body {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-image: url("assets/images/cat.jpg") !important;
+    background-image: url("assets/images/cat.jpg");
     background-size: cover;
     margin-right: 10px;
 }
@@ -566,6 +566,7 @@ tbody tr:last-child td:last-child {
     cursor: pointer;
     width: 120px;
     height: 30px;
+    margin: 10px;
 }
 
 .cancel-btn:hover, .create-btn:hover{
@@ -577,14 +578,14 @@ tbody tr:last-child td:last-child {
 .modal-body {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Adds space between rows */
+    margin: 15px; /* Adds space between rows */
 }
 
 .modal-body div {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px; /* Adds space between label and input */
+    margin: 10px; /* Adds space between label and input */
 }
 
 .modal-body label {
@@ -631,7 +632,7 @@ tbody tr:last-child td:last-child {
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    margin: 10px;
     padding-top: 20px;
 }
 
