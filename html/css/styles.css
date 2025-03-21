@@ -22,7 +22,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #009dff; 
+    background-color: #007BC7; 
     color: white;
     position: fixed;
     top: 0;
@@ -331,7 +331,7 @@ body {
 .edit-btn, .delete-btn {
     width: 25px;
     height: 25px;
-    background-color: #009dff;
+    background-color: #007BC7;
     border-radius: 1.1vh;
     border: none;
     cursor: pointer;
@@ -348,7 +348,7 @@ body {
 }
 
 .edit-btn:hover, .delete-btn:hover {
-    background-color: #0056b3;
+    background-color: #003E80;
 }
 
 
@@ -396,7 +396,7 @@ tbody tr:last-child td:last-child {
     top: 100px; 
     right: 20px; 
     padding: 0; 
-    background-color: #009dff;
+    background-color: #007BC7;
     border-radius: 1.2vh;
     color: white;
     border: none;
@@ -410,7 +410,7 @@ tbody tr:last-child td:last-child {
 }
 
 .plus-button:hover {
-    background-color: #0056b3;
+    background-color: #003E80;
 }
 
 .status-circle {
@@ -493,7 +493,7 @@ tbody tr:last-child td:last-child {
 }
 
 .delete-cancel-btn, .delete-confirm-btn{
-    background: #009dff;
+    background: #007BC7;
     border-radius: 1.2vh;
     color: white;
     border: none;
@@ -503,13 +503,13 @@ tbody tr:last-child td:last-child {
 }
 
 .delete-cancel-btn:hover, .delete-confirm-btn:hover{
-    background: #0056b3;
+    background: #003E80;
 }
 
 .Delclose-btn{
     position: absolute;
     right: 10px;
-    background: #009dff;
+    background: #007BC7;
     border-radius: 1.2vh;
     color: white;
     border: none;
@@ -519,7 +519,7 @@ tbody tr:last-child td:last-child {
 }
 
 .Delclose-btn:hover{
-    background: #0056b3;
+    background: #003E80;
 }
 
 
@@ -535,7 +535,7 @@ tbody tr:last-child td:last-child {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: #009dff;
+    background: #007BC7;
     border-radius: 1.2vh;
     color: white;
     border: none;
@@ -545,11 +545,11 @@ tbody tr:last-child td:last-child {
 }
 
 .close-btn:hover{
-    background: #0056b3;
+    background: #003E80;
 }
 
 .cancel-btn, .create-btn{
-    background: #009dff;
+    background: #007BC7;
     border-radius: 1.2vh;
     color: white;
     border: none;
@@ -559,7 +559,7 @@ tbody tr:last-child td:last-child {
 }
 
 .cancel-btn:hover, .create-btn:hover{
-    background: #0056b3;
+    background: #003E80;
 }
 
 
