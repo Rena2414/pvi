@@ -341,6 +341,7 @@ document.querySelector(".plane-icon").addEventListener("click", function () {
     }
 
     clickTimer = setTimeout(() => {
+        document.getElementById('notification-circle').style.opacity = 1;
         window.location.href = "messages.html"; // Single click action
         clickTimer = null;
     }, 300); // Adjust the timeout if needed

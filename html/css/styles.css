@@ -1,3 +1,7 @@
+html, body {
+    overflow-x: hidden;
+}
+
 body {
     margin: 0;
     padding-top: 60px; /* Matches header height to prevent overlap */
@@ -299,7 +303,7 @@ body {
 /* Main Content Area */
 .main-content {
     flex-grow: 1;
-    margin-left: 250px; /* Offset for side panel */
+    margin-left: 230px; /* Offset for side panel */
     padding: 20px;
 
 }
@@ -339,8 +343,14 @@ body {
 .edit-btn:disabled, .delete-btn:disabled {
     background-color: #eaf4ff; /* Gray color for disabled state */
     cursor: not-allowed; 
+    pointer-events: none;
     /*filter: brightness(0.7);  Darken image for disabled state */
 }
+
+.edit-btn:hover, .delete-btn:hover {
+    background-color: #0056b3;
+}
+
 
 
 .edit-btn {
@@ -383,14 +393,20 @@ tbody tr:last-child td:last-child {
 
 .plus-button {
     position: absolute; /* Position inside the table container */
-    top: 100px; /* 20px from the bottom */
-    right: 20px; /* 20px from the right */
-    padding: 10px 15px;
+    top: 100px; 
+    right: 20px; 
+    padding: 0; 
     background-color: #009dff;
-    border-radius: 1.1vh;
+    border-radius: 1.2vh;
     color: white;
     border: none;
     cursor: pointer;
+    font-size: 24px;
+    width: 40px; 
+    height: 40px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
 }
 
 .plus-button:hover {
