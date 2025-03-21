@@ -316,28 +316,6 @@ body {
     margin-left: 0; /* Adjusted margin */
 }
 
-/* Show hamburger button on smaller screens */
-@media (max-width: 768px) {
-    .hamburger-menu {
-        display: block;
-    }
-
-    .side-panel {
-        width: 200px;
-        position: fixed;
-        top: 60px;
-        left: 0;
-        transform: translateX(-100%);
-    }
-
-    .side-panel.hidden {
-        transform: translateX(0); /* Show the panel when toggled */
-    }
-
-    .main-content {
-        margin-left: 0;
-    }
-}
 
 .table-container {
     margin-top: 20px;
