@@ -50,6 +50,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectAllCheckbox = document.querySelector("thead input[type='checkbox']"); 
     const checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
 
+
+
+    //select all checkbox logic
+    const tableCheckboxes = document.querySelectorAll("table td input[type='checkbox']");
+
+    function updateSelectAllCheckbox() {
+        selectAllCheckbox.checked = [...tableCheckboxes].every(checkbox => checkbox.checked);
+    }
+
+    tableCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", updateSelectAllCheckbox);
+    });
+
     //close delete modal window
     DelcloseModalBtn.addEventListener("click", function () {
         closeDeleteModal();
@@ -230,6 +243,10 @@ function toggleEditDeleteButtons() {
     function addRowEventListeners(row) {
         const editBtn = row.querySelector(".edit-btn");
         const deleteBtn = row.querySelector(".delete-btn");
+
+        tableCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", updateSelectAllCheckbox);
+        });
 
         editBtn.addEventListener("click", function () {
             const firstName = row.querySelector("td:nth-child(3)").innerText.split(" ")[0]; 
