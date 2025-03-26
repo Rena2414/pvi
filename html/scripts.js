@@ -304,3 +304,12 @@ document.querySelector(".plane-icon").addEventListener("click", function () {
         clickTimer = null;
     }, 300); 
 });
+
+window.addEventListener('resize', function () {
+    const minHeight = 600;
+    if (window.innerHeight < minHeight) {
+        document.body.style.height = `${minHeight}px`;
+    } else {
+        document.body.style.height = "auto";
+    }
+});

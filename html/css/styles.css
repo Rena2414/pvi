@@ -1,5 +1,6 @@
 html, body {
     overflow-x: hidden;
+    overflow-y: auto;
 }
 
 body {
@@ -13,6 +14,7 @@ body {
     background-repeat: no-repeat;
     width: 100%;
     height: 100vh;
+    min-height: 600px;
 }
 
 /* Header styling */
