@@ -18,6 +18,27 @@
     .hamburger-menu {
         display: block;
     }
+    table {
+        min-width: 600px; /* Set a minimum width to avoid shrinking too much */
+        margin-right: 5px;
+        overflow-x: auto;
+    }
+
+    .table-container {
+        padding: 0;
+        max-width: 90%; /* Limit container width */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        margin-right: 5px;
+    }
+
+    th, td {
+        padding: 0;
+        text-align: center;
+        border: 1px solid #bfdcfd;
+        border-collapse: separate;
+    }
+    
+
 
     .side-panel {
         width: 140px;

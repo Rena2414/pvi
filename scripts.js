@@ -324,9 +324,25 @@ document.querySelector(".plane-icon").addEventListener("click", function () {
 
 window.addEventListener('resize', function () {
     const minHeight = 600;
+    const screenWidth = window.innerWidth;
     if (window.innerHeight < minHeight) {
         document.body.style.height = `${minHeight}px`;
     } else {
         document.body.style.height = "auto";
     }
+
+      // Get the table columns (Gender and Status columns are 4th and 6th)
+      const genderColumn = document.querySelectorAll('th:nth-child(4), td:nth-child(4)');
+      const statusColumn = document.querySelectorAll('th:nth-child(6), td:nth-child(6)');
+  
+      // Apply styles based on screen width
+      if (screenWidth <= 768) {
+          // Hide the 4th (Gender) and 6th (Status) columns when screen is smaller than 768px
+          genderColumn.forEach(col => col.style.display = 'none');
+          statusColumn.forEach(col => col.style.display = 'none');
+      } else {
+          // Show columns if screen is larger than 768px
+          genderColumn.forEach(col => col.style.display = '');
+          statusColumn.forEach(col => col.style.display = '');
+      }
 });

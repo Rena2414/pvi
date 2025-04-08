@@ -1,3 +1,10 @@
+
+* {
+    box-sizing: border-box;
+}
+
+
+
 html, body {
     overflow-x: hidden;
     overflow-y: auto;
@@ -322,8 +329,15 @@ body {
     margin-top: 20px;
     text-align: center;
     background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
+    overflow-x: auto; /* Enable scrolling within the container */
+    width: 100%; /* Restrict the container width */
+    margin: 0 auto; /* Center the table */
+    max-width: 100vw;
+
 }
+
+
+
 
 .edit-btn, .delete-btn {
     width: 25px;
@@ -360,7 +374,13 @@ body {
 table {
     width: 100%;
     text-align: center;
+    min-width: 600px; 
+    table-layout: fixed;
 }
+
+
+
+
 
 th, td {
     padding: 10px;
