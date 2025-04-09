@@ -1,5 +1,19 @@
 let studentsToDelete = [];
 
+let currentId = getMaxStudentId() + 1;
+
+function getMaxStudentId() {
+    const idCells = document.querySelectorAll("tbody tr td:first-child");
+    let maxId = 0;
+    idCells.forEach(cell => {
+        const id = parseInt(cell.innerText);
+        if (!isNaN(id) && id > maxId) {
+            maxId = id;
+        }
+    });
+    return maxId;
+}
+
  //function to clear modal fields
  function clearModalFields() {
     document.getElementById("group").value = "PZ-21"; // or default
@@ -178,6 +192,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const gender = document.getElementById("gender").value;
         const birthday = document.getElementById("birthday").value;
 
+        const [year, month, day] = birthday.split("-");
+        const formattedBirthday = `${day}-${month}-${year}`;
+
         clearModalFields();
         // Validation
         if (!firstName || !lastName || !birthday) {
@@ -188,16 +205,18 @@ document.addEventListener("DOMContentLoaded", function () {
         // Create new row
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
+            
             <td><input type="checkbox"></td>
             <td>${group}</td>
             <td>${firstName} ${lastName}</td>
             <td>${gender}</td>
-            <td>${birthday}</td>
+            <td>${formattedBirthday}</td>
             <td><span class="status-circle green-status"></span></td>
             <td>
                 <button class="edit-btn" disabled></button>
                 <button class="delete-btn" disabled></button>
             </td>
+             <td style="display:none;">${currentId}</td>
         `;
 
         studentsTable.appendChild(newRow);
@@ -274,10 +293,28 @@ function toggleEditDeleteButtons() {
         });
 
         editBtn.addEventListener("click", function () {
-            const firstName = row.querySelector("td:nth-child(3)").innerText.split(" ")[0]; 
-            const lastName = row.querySelector("td:nth-child(3)").innerText.split(" ")[1]; 
-            document.getElementById("first-name").value = firstName;
-            document.getElementById("last-name").value = lastName;
+                const group = row.querySelector("td:nth-child(2)").innerText;
+                const fullName = row.querySelector("td:nth-child(3)").innerText.trim().split(" ");
+                const gender = row.querySelector("td:nth-child(4)").innerText;
+                let birthday = row.querySelector("td:nth-child(5)").innerText.trim();
+
+                // Check if it matches DD-MM-YYYY
+                const dateParts = birthday.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+                if (dateParts) {
+                    const [_, day, month, year] = dateParts;
+                    birthday = `${year}-${month}-${day}`;
+                } else {
+                console.warn("Unexpected birthday format:", birthday);
+                birthday = ""; // fallback
+                }
+                // Fill the modal inputs
+                document.getElementById("group").value = group;
+                document.getElementById("first-name").value = fullName[0];
+                document.getElementById("last-name").value = fullName[1] || "";
+                document.getElementById("gender").value = gender;
+                document.getElementById("birthday").value = birthday;
+
+
             modal.style.display = "flex"; 
             document.querySelector(".modal-header h2").innerText = "Edit Student"; 
         });
