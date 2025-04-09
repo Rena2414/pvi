@@ -1,5 +1,14 @@
 let studentsToDelete = [];
 
+ //function to clear modal fields
+ function clearModalFields() {
+    document.getElementById("group").value = "PZ-21"; // or default
+    document.getElementById("first-name").value = "";
+    document.getElementById("last-name").value = "";
+    document.getElementById("gender").value = "M";
+    document.getElementById("birthday").value = "";
+}
+
 //Function for the delete button
 //If we pick one student than text would be that students name
 //If there are more than 1 student, no names will be shown
@@ -36,6 +45,7 @@ function closeModal() {
 
 //open add/close student modal
 function openModal() {
+    clearModalFields();
     document.querySelector(".modal").style.display = "block";
 }
 
@@ -103,6 +113,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
     
+   
+
+
     //adding event listeners to all existing rows
     function addEditButtonEventListeners() {
         const rows = document.querySelectorAll("tbody tr"); 
@@ -111,12 +124,25 @@ document.addEventListener("DOMContentLoaded", function () {
             const editButton = row.querySelector(".edit-btn");
             if (editButton) {
                 editButton.addEventListener("click", function () {
-                    const firstName = row.querySelector("td:nth-child(3)").innerText.split(" ")[0]; 
-                    const lastName = row.querySelector("td:nth-child(3)").innerText.split(" ")[1]; 
-                    document.getElementById("first-name").value = firstName;
-                    document.getElementById("last-name").value = lastName;
-                    modal.style.display = "flex";
+                    const group = row.querySelector("td:nth-child(2)").innerText;
+                    const fullName = row.querySelector("td:nth-child(3)").innerText.trim().split(" ");
+                    const gender = row.querySelector("td:nth-child(4)").innerText;
+                    let birthday = row.querySelector("td:nth-child(5)").innerText;
+    
+                    // Convert "DD-MM-YYYY" to "YYYY-MM-DD" for input[type="date"]
+                    const [day, month, year] = birthday.split("-");
+                    birthday = `${year}-${month}-${day}`;
+    
+                    // Fill the modal inputs
+                    document.getElementById("group").value = group;
+                    document.getElementById("first-name").value = fullName[0];
+                    document.getElementById("last-name").value = fullName[1] || "";
+                    document.getElementById("gender").value = gender;
+                    document.getElementById("birthday").value = birthday;
+    
+                    // Open modal in edit mode
                     document.querySelector(".modal-header h2").innerText = "Edit Student";
+                    modal.style.display = "flex";
                 });
             }
         });
@@ -152,6 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const gender = document.getElementById("gender").value;
         const birthday = document.getElementById("birthday").value;
 
+        clearModalFields();
         // Validation
         if (!firstName || !lastName || !birthday) {
             alert("Please fill in all fields");
@@ -179,9 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         modal.style.display = "none";
-        document.getElementById("first-name").value = "";
-        document.getElementById("last-name").value = "";
-        document.getElementById("birthday").value = "";
+        clearModalFields();
 
     });
 
