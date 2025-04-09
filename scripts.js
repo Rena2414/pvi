@@ -637,7 +637,7 @@ window.addEventListener('resize', function () {
     } else {
         document.body.style.height = "auto";
     }
-
+/*
       // Get the table columns (Gender and Status columns are 4th and 6th)
       const genderColumn = document.querySelectorAll('th:nth-child(4), td:nth-child(4)');
       const statusColumn = document.querySelectorAll('th:nth-child(6), td:nth-child(6)');
@@ -652,4 +652,5 @@ window.addEventListener('resize', function () {
           genderColumn.forEach(col => col.style.display = '');
           statusColumn.forEach(col => col.style.display = '');
       }
+        */
 });
