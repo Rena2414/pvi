@@ -1,7 +1,8 @@
 let studentsToDelete = [];
 
-let currentId = getMaxStudentId() + 1;
+let currentId = 4;
 
+/*
 function getMaxStudentId() {
     const idCells = document.querySelectorAll("tbody tr td:first-child");
     let maxId = 0;
@@ -13,6 +14,7 @@ function getMaxStudentId() {
     });
     return maxId;
 }
+    */
 
 // Function to clear previous errors
 function clearErrors() {
@@ -87,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const studentsTable = document.querySelector("tbody");
     const selectAllCheckbox = document.querySelector("thead input[type='checkbox']"); 
     const checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
-
+    let editingRow = null;
 
 
     //select all checkbox logic
@@ -145,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     //adding event listeners to all existing rows
-    function addEditButtonEventListeners() {
+    /*function addEditButtonEventListeners() {
         const rows = document.querySelectorAll("tbody tr"); 
     
         rows.forEach(function (row) {
@@ -174,7 +176,46 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
         });
-    }
+    }*/
+
+
+
+        function addEditButtonEventListeners() {
+            const rows = document.querySelectorAll("tbody tr");
+        
+            rows.forEach(function (row) {
+                const editButton = row.querySelector(".edit-btn");
+                if (editButton) {
+                    editButton.addEventListener("click", function () {
+                        const group = row.querySelector("td:nth-child(2)").innerText;
+                        const fullName = row.querySelector("td:nth-child(3)").innerText.trim().split(" ");
+                        const gender = row.querySelector("td:nth-child(4)").innerText;
+                        let birthday = row.querySelector("td:nth-child(5)").innerText;
+                        const studentId = row.querySelector("td:nth-child(8)").innerText;
+
+                        // Convert "DD-MM-YYYY" to "YYYY-MM-DD" for input[type="date"]
+                        const [day, month, year] = birthday.split("-");
+                        birthday = `${year}-${month}-${day}`;
+        
+                        // Fill the modal inputs
+                        document.getElementById("group").value = group;
+                        document.getElementById("first-name").value = fullName[0];
+                        document.getElementById("last-name").value = fullName[1] || "";
+                        document.getElementById("gender").value = gender;
+                        document.getElementById("birthday").value = birthday;
+                        document.getElementById("student-id").value = studentId;
+                        // Set the row being edited
+                        editingRow = row;
+        
+                        // Open modal in edit mode
+                        document.querySelector(".modal-header h2").innerText = "Edit Student";
+                        document.querySelector(".create-btn").innerText = "Update Student";  // Change button text
+                        modal.style.display = "flex";
+                    });
+                }
+            });
+        }
+
 
     function addDeleteButtonEventListeners() {
         const rows = document.querySelectorAll("tbody tr"); 
@@ -209,7 +250,7 @@ function showError(inputElement, message) {
     }
 }
 
-
+/*
 
 // Add Student to Table
 createBtn.addEventListener("click", function () {
@@ -261,23 +302,38 @@ createBtn.addEventListener("click", function () {
         return; // Do not proceed with row creation
     }
 
+    if (editingRow) {
+        editingRow.querySelector("td:nth-child(2)").innerText = group;
+        editingRow.querySelector("td:nth-child(3)").innerText = `${firstName} ${lastName}`;
+        editingRow.querySelector("td:nth-child(4)").innerText = gender;
+        editingRow.querySelector("td:nth-child(5)").innerText = formattedBirthday;
+
+        // Optionally, update the status circle or other data here
+        // editingRow.querySelector("td:nth-child(6)").innerHTML = `<span class="status-circle green-status"></span>`;
+
+        editingRow = null;  // Reset editingRow to null after updating
+    } else {
+        // If not editing, create a new row (same logic as before)
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td><input type="checkbox"></td>
+            <td>${group}</td>
+            <td>${firstName} ${lastName}</td>
+            <td>${gender}</td>
+            <td>${formattedBirthday}</td>
+            <td><span class="status-circle green-status"></span></td>
+            <td>
+                <button class="edit-btn" disabled></button>
+                <button class="delete-btn" disabled></button>
+            </td>
+            <td style="display:none;">${currentId}</td>
+        `;
+        studentsTable.appendChild(newRow);
+        addRowEventListeners(newRow);
+        addCheckboxEventListeners();
+    }
 
 
-    // Once all fields are valid, create the new student row
-    const newRow = document.createElement("tr");
-    newRow.innerHTML = `
-        <td><input type="checkbox"></td>
-        <td>${group}</td>
-        <td>${firstName} ${lastName}</td>
-        <td>${gender}</td>
-        <td>${formattedBirthday}</td>
-        <td><span class="status-circle green-status"></span></td>
-        <td>
-            <button class="edit-btn" disabled></button>
-            <button class="delete-btn" disabled></button>
-        </td>
-        <td style="display:none;">${currentId}</td>
-    `;
 
     studentsTable.appendChild(newRow);
     addRowEventListeners(newRow);
@@ -285,6 +341,129 @@ createBtn.addEventListener("click", function () {
 
     modal.style.display = "none";
     clearModalFields(); // Clear modal fields after successful submission
+});
+*/ 
+
+createBtn.addEventListener("click", function () {
+    let isValid = true;
+    let isFilledIn = true;
+    clearErrors(); // Clear any previous errors
+
+    const group = document.getElementById("group").value;
+    const firstName = document.getElementById("first-name").value.trim();
+    const lastName = document.getElementById("last-name").value.trim();
+    const gender = document.getElementById("gender").value;
+    const birthday = document.getElementById("birthday").value;
+    const studentId = document.getElementById("student-id").value;
+
+    const [year, month, day] = birthday.split("-");
+    const formattedBirthday = `${day}-${month}-${year}`;
+
+    // Validate each field
+    if (!firstName) {
+        showError(document.getElementById("first-name"), "First name is required.");
+        isValid = false;
+        isFilledIn = false;
+    } else if (!/^[A-Z]/.test(firstName)) { // Check if first name starts with a capital letter
+        showError(document.getElementById("first-name"), "First name must start with a capital letter.");
+        isValid = false;
+    }
+
+    if (!lastName) {
+        showError(document.getElementById("last-name"), "Last name is required.");
+        isValid = false;
+        isFilledIn = false;
+    } else if (!/^[A-Z]/.test(lastName)) { // Check if last name starts with a capital letter
+        showError(document.getElementById("last-name"), "Last name must start with a capital letter.");
+        isValid = false;
+    }
+
+    if (!birthday) {
+        showError(document.getElementById("birthday"), "Birthday is required.");
+        isValid = false;
+        isFilledIn = false;
+    }
+
+    if (!isFilledIn) {
+        alert("Please fill in all required fields.");
+        return; // Do not proceed with row creation
+    }
+
+    // If any field is invalid, prevent further execution and show error messages
+    if (!isValid) {
+        return; // Do not proceed with row creation
+    }
+
+    // If editing a student (editingRow is not null), update the row
+    if (editingRow) {
+        const group = document.getElementById("group").value;
+        const firstName = document.getElementById("first-name").value.trim();
+        const lastName = document.getElementById("last-name").value.trim();
+        const gender = document.getElementById("gender").value;
+        const birthday = document.getElementById("birthday").value;
+    
+        const [year, month, day] = birthday.split("-");
+        const formattedBirthday = `${day}-${month}-${year}`;
+    
+        // Update the row content
+        editingRow.querySelector("td:nth-child(2)").innerText = group;
+        editingRow.querySelector("td:nth-child(3)").innerText = `${firstName} ${lastName}`;
+        editingRow.querySelector("td:nth-child(4)").innerText = gender;
+        editingRow.querySelector("td:nth-child(5)").innerText = formattedBirthday;
+    
+        // Create a JSON object for the edited student
+        const editedStudent = {
+            id: studentId,
+            group: group,
+            firstName: firstName,
+            lastName: lastName,
+            gender: gender,
+            birthday: formattedBirthday
+        };
+    
+        // Log the JSON object to the console
+        console.log("Edited Student: ", JSON.stringify(editedStudent));
+    
+        // Reset editingRow to null after updating
+        editingRow = null;
+    } else {
+        currentId = currentId + 1;
+        // If not editing, create a new row (same logic as before)
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td><input type="checkbox"></td>
+            <td>${group}</td>
+            <td>${firstName} ${lastName}</td>
+            <td>${gender}</td>
+            <td>${formattedBirthday}</td>
+            <td><span class="status-circle green-status"></span></td>
+            <td>
+                <button class="edit-btn" disabled></button>
+                <button class="delete-btn" disabled></button>
+            </td>
+            <td style="display:none;">${currentId}</td>
+        `;
+        const newStudent = {
+            id: currentId, // The ID of the newly created student
+            group: group,
+            firstName: firstName,
+            lastName: lastName,
+            gender: gender,
+            birthday: formattedBirthday
+        };
+
+        console.log("New Student: ", JSON.stringify(newStudent));
+
+
+        studentsTable.appendChild(newRow);
+        addRowEventListeners(newRow);
+        addCheckboxEventListeners();
+    }
+
+    modal.style.display = "none";
+    clearModalFields(); // Clear modal fields after successful submission
+    document.querySelector(".modal-header h2").innerText = "Add Student"; // Reset header to default
+    document.querySelector(".create-btn").innerText = "Create";  // Reset button text
 });
 
 
