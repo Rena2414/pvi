@@ -6,8 +6,10 @@
 
 
 html, body {
-    overflow-x: hidden;
+    overflow-x: auto;
     overflow-y: auto;
+    margin: 0;
+    padding: 0;
 }
 
 body {
@@ -336,6 +338,18 @@ body {
 
 }
 
+/* Table */
+table {
+    width: 100%;
+    text-align: center;
+    min-width: 600px; 
+    table-layout: auto;
+    border-collapse: collapse;
+}
+
+
+
+
 
 
 
@@ -370,16 +384,6 @@ body {
     background-image: url("assets/images/delete.png");
 }
 
-/* Table */
-table {
-    width: 100%;
-    text-align: center;
-    min-width: 600px; 
-    table-layout: fixed;
-}
-
-
-
 
 
 th, td {
@@ -387,6 +391,8 @@ th, td {
     text-align: center;
     border: 1px solid #bfdcfd;
     border-collapse: separate;
+    word-wrap: break-word; /* Breaks long words to avoid overflow */
+    word-break: break-all;
     /*overflow: hidden;*/
 }
 
@@ -415,9 +421,9 @@ tbody tr:last-child td:last-child {
 }
 
 .plus-button {
-    position: absolute; 
-    top: 100px; 
-    right: 20px; 
+    position: fixed; /* Keeps the button fixed */
+    top: 100px; /* Adjust the top position */
+    right: 20px; /* Keeps it on the right side */
     padding: 0; 
     background-color: #007BC7;
     border-radius: 1.2vh;
@@ -430,7 +436,10 @@ tbody tr:last-child td:last-child {
     display: flex; 
     justify-content: center; 
     align-items: center; 
+     /* Ensures the button stays above other content */
 }
+
+
 
 .plus-button:hover {
     background-color: #003E80;

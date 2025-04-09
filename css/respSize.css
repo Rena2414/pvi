@@ -22,6 +22,8 @@
         min-width: 600px; /* Set a minimum width to avoid shrinking too much */
         margin-right: 5px;
         overflow-x: auto;
+        width: 100%;
+
     }
 
     .table-container {
