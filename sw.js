@@ -4,29 +4,28 @@ const CACHE_NAME = "pwa-cache-v1";
 // Масив ресурсів, які будуть кешовані при встановленні Service Worker 
 // ви кешуєте всі свої файли
 const ASSETS = [
-  "/",                      // Головна сторінка
-  "/index.html",            // HTML-файл
-  "/dashboard.html",
-  "/mainWindow.html",
-  "/messages.html",
-  "/tasks.html",
- // CSS-стилі
-  "css/styles.css", 
-  "css/respSize.css",  
-           
-  "css/assets/images/Background.png",
-  "css/assets/images/cat.jpg",
-  "css/assets/images/delete.png",
-  "css/assets/images/edit.png",
-  "css/assets/images/gameModelRender.png",
-  "css/assets/images/plane.png",
-  "css/assets/images/pohoda.png",
-  "css/assets/images/sherlock.jpg",
-  "/css/assets/images/icon192.png",
-  "/css/assets/images/icon128.png",
+    "index.html",
+    "dashboard.html",
+    "mainWindow.html",
+    "messages.html",
+    "tasks.html",
 
-  "/scripts.js",             // Головний JavaScript-файл
-];
+    "css/styles.css",
+    "css/respSize.css",
+
+    "css/assets/images/Background.png",
+    "css/assets/images/cat.jpg",
+    "css/assets/images/delete.png",
+    "css/assets/images/edit.png",
+    "css/assets/images/gameModelRender.png",
+    "css/assets/images/plane.png",
+    "css/assets/images/pohoda.png",
+    "css/assets/images/sherlock.jpg",
+    "css/assets/images/icon192.png",
+    "css/assets/images/icon128.png",
+    
+    "scripts.js",
+  ];
 
 // Подія встановлення Service Worker
 // Відбувається при першому запуску або коли SW оновлюється

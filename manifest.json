@@ -3,8 +3,8 @@
     "short_name": "PWA App", 
     "description": "Це прогресивний веб-додаток (PWA) для швидкого та зручного доступу до контенту.", 
   
-    "start_url": "/", 
-    "scope": "/", 
+   "start_url": ".",
+    "scope": ".", 
     "display": "standalone", 
     "orientation": "portrait-primary", 
     "background_color": "#ffffff", 
@@ -12,12 +12,12 @@
   
     "icons": [
       {
-        "src": "/css/assets/images/icon128.png", 
+        "src": "css/assets/images/icon128.png", 
         "sizes": "128x128",
         "type": "image/png"
       },
       {
-        "src": "/css/assets/images/icon192.png", 
+        "src": "css/assets/images/icon192.png", 
         "sizes": "192x192",
         "type": "image/png"
       }
