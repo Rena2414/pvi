@@ -1,14 +1,15 @@
 {
-    "name": "My Students App", 
-    "short_name": "Students", 
+    "name": "My PWA App", 
+    "short_name": "PWA App", 
     "description": "Це прогресивний веб-додаток (PWA) для швидкого та зручного доступу до контенту.", 
-
+  
     "start_url": "/", 
     "scope": "/", 
     "display": "standalone", 
     "orientation": "portrait-primary", 
     "background_color": "#ffffff", 
     "theme_color": "#000000", 
+  
     "icons": [
       {
         "src": "/css/assets/images/gameModelRender.png", 
@@ -19,8 +20,18 @@
         "src": "/css/assets/images/gameModelRender.png", 
         "sizes": "192x192",
         "type": "image/png"
+      },
+      {
+        "src": "/css/assets/images/gameModelRender.png", 
+        "sizes": "256x256",
+        "type": "image/png"
+      },
+      {
+        "src": "/css/assets/images/gameModelRender.png", 
+        "sizes": "512x512",
+        "type": "image/png"
       }
     ]
-}
   
-   
+
+  }
