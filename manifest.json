@@ -1,7 +1,7 @@
 {
-    "name": "My PWA App", 
-    "short_name": "PWA App", 
-    "description": "Це прогресивний веб-додаток (PWA) для швидкого та зручного доступу до контенту.", 
+    "name": "My Students App", 
+    "short_name": "Students", 
+    "description": "Nice app for managing your students", 
   
    "start_url": ".",
     "scope": ".", 
