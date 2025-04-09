@@ -619,6 +619,48 @@ tbody tr:last-child td:last-child {
     flex-grow: 1; 
 }
 
+/*
+input:invalid, select:invalid {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+  }
+  
+  input:valid, select:valid {
+    border: 2px solid green;
+    background-color: #e6ffe6;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.9em;
+    display: none; 
+    margin-top: 5px;
+}
+*/
+
+/*
+input:focus:invalid + .error-message,
+input:invalid:focus + .error-message {
+    display: block; 
+}
+
+input:valid + .error-message {
+    display: none; 
+}
+
+input:not(:placeholder-shown) + .error-message {
+    display: none; 
+}*/
+
+
+.error-message {
+    display: none; /* Hidden by default */
+    font-size: 12px;
+    color: red;
+    margin-top: 5px;
+}
+
+
 .modal {
     display: none; 
     position: fixed;

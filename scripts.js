@@ -14,6 +14,19 @@ function getMaxStudentId() {
     return maxId;
 }
 
+// Function to clear previous errors
+function clearErrors() {
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.style.borderColor = ""; // Reset border color
+        const errorDiv = input.nextElementSibling;
+        if (errorDiv && errorDiv.classList.contains("error-message")) {
+            errorDiv.textContent = ""; // Clear error message
+            errorDiv.style.display = "none"; // Hide error message
+        }
+    });
+}
+
  //function to clear modal fields
  function clearModalFields() {
     document.getElementById("group").value = "PZ-21"; // or default
@@ -59,6 +72,7 @@ function closeModal() {
 
 //open add/close student modal
 function openModal() {
+    clearErrors();
     clearModalFields();
     document.querySelector(".modal").style.display = "block";
 }
@@ -184,50 +198,95 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Add Student to Table
-    createBtn.addEventListener("click", function () {
-        const group = document.getElementById("group").value;
-        const firstName = document.getElementById("first-name").value.trim();
-        const lastName = document.getElementById("last-name").value.trim();
-        const gender = document.getElementById("gender").value;
-        const birthday = document.getElementById("birthday").value;
-
-        const [year, month, day] = birthday.split("-");
-        const formattedBirthday = `${day}-${month}-${year}`;
-
-        clearModalFields();
-        // Validation
-        if (!firstName || !lastName || !birthday) {
-            alert("Please fill in all fields");
-            return;
-        }
-
-        // Create new row
-        const newRow = document.createElement("tr");
-        newRow.innerHTML = `
-            
-            <td><input type="checkbox"></td>
-            <td>${group}</td>
-            <td>${firstName} ${lastName}</td>
-            <td>${gender}</td>
-            <td>${formattedBirthday}</td>
-            <td><span class="status-circle green-status"></span></td>
-            <td>
-                <button class="edit-btn" disabled></button>
-                <button class="delete-btn" disabled></button>
-            </td>
-             <td style="display:none;">${currentId}</td>
-        `;
-
-        studentsTable.appendChild(newRow);
-        addRowEventListeners(newRow);
-        addCheckboxEventListeners(); 
+  // Function to show error message and highlight invalid fields
+function showError(inputElement, message) {
+    const errorDiv = inputElement.nextElementSibling; // Find the error message div (it comes right after the input)
+    if (errorDiv && errorDiv.classList.contains("error-message")) {
+        inputElement.style.borderColor = "red"; // Change border color to red
+        errorDiv.textContent = message; // Set the error message text
+        errorDiv.style.color = "red"; // Set error message color to red
+        errorDiv.style.display = "block"; // Ensure the error message is visible
+    }
+}
 
 
-        modal.style.display = "none";
-        clearModalFields();
 
-    });
+// Add Student to Table
+createBtn.addEventListener("click", function () {
+    let isValid = true;
+    let isFilledIn = true;
+    clearErrors(); // Clear any previous errors
+
+    const group = document.getElementById("group").value;
+    const firstName = document.getElementById("first-name").value.trim();
+    const lastName = document.getElementById("last-name").value.trim();
+    const gender = document.getElementById("gender").value;
+    const birthday = document.getElementById("birthday").value;
+
+    const [year, month, day] = birthday.split("-");
+    const formattedBirthday = `${day}-${month}-${year}`;
+
+    // Validate each field
+    if (!firstName) {
+        showError(document.getElementById("first-name"), "First name is required.");
+        isValid = false;
+        isFilledIn = false;
+    } else if (!/^[A-Z]/.test(firstName)) { // Check if first name starts with a capital letter
+        showError(document.getElementById("first-name"), "First name must start with a capital letter.");
+        isValid = false;
+    }
+
+    if (!lastName) {
+        showError(document.getElementById("last-name"), "Last name is required.");
+        isValid = false;
+        isFilledIn = false;
+    }else if (!/^[A-Z]/.test(lastName)) { // Check if last name starts with a capital letter
+        showError(document.getElementById("last-name"), "Last name must start with a capital letter.");
+        isValid = false;
+    }
+
+    if (!birthday) {
+        showError(document.getElementById("birthday"), "Birthday is required.");
+        isValid = false;
+        isFilledIn = false;
+    }
+
+    if(! isFilledIn){
+        alert("Please fill in all required fields.");
+        return; // Do not proceed with row creation
+    }
+
+    // If any field is invalid, prevent further execution and show error messages
+    if (!isValid) {
+        return; // Do not proceed with row creation
+    }
+
+
+
+    // Once all fields are valid, create the new student row
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+        <td><input type="checkbox"></td>
+        <td>${group}</td>
+        <td>${firstName} ${lastName}</td>
+        <td>${gender}</td>
+        <td>${formattedBirthday}</td>
+        <td><span class="status-circle green-status"></span></td>
+        <td>
+            <button class="edit-btn" disabled></button>
+            <button class="delete-btn" disabled></button>
+        </td>
+        <td style="display:none;">${currentId}</td>
+    `;
+
+    studentsTable.appendChild(newRow);
+    addRowEventListeners(newRow);
+    addCheckboxEventListeners(); 
+
+    modal.style.display = "none";
+    clearModalFields(); // Clear modal fields after successful submission
+});
+
 
     // Check/uncheck checkboxes depending on selectAllcheckbox
     selectAllCheckbox.addEventListener("change", function () {
