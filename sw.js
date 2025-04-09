@@ -22,6 +22,8 @@ const ASSETS = [
   "css/assets/images/plane.png",
   "css/assets/images/pohoda.png",
   "css/assets/images/sherlock.jpg",
+  "/css/assets/images/icon192.png",
+  "/css/assets/images/icon128.png",
 
   "/scripts.js",             // Головний JavaScript-файл
 ];
