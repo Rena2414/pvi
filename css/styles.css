@@ -391,7 +391,7 @@ th, td {
     text-align: center;
     border: 1px solid #bfdcfd;
     border-collapse: separate;
-    word-wrap: break-word; /* Breaks long words to avoid overflow */
+    word-wrap: break-word; 
     word-break: break-all;
     /*overflow: hidden;*/
 }
@@ -421,9 +421,9 @@ tbody tr:last-child td:last-child {
 }
 
 .plus-button {
-    position: fixed; /* Keeps the button fixed */
-    top: 100px; /* Adjust the top position */
-    right: 20px; /* Keeps it on the right side */
+    position: fixed; 
+    top: 100px; 
+    right: 20px; 
     padding: 0; 
     background-color: #007BC7;
     border-radius: 1.2vh;
@@ -436,7 +436,7 @@ tbody tr:last-child td:last-child {
     display: flex; 
     justify-content: center; 
     align-items: center; 
-     /* Ensures the button stays above other content */
+    
 }
 
 

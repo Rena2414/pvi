@@ -23,23 +23,23 @@ function getMaxStudentId() {
     return maxId;
 }
     */
-
 // Function to clear previous errors
 function clearErrors() {
     const inputs = document.querySelectorAll('input, select');
     inputs.forEach(input => {
-        input.style.borderColor = ""; // Reset border color
+        input.style.borderColor = ""; 
         const errorDiv = input.nextElementSibling;
         if (errorDiv && errorDiv.classList.contains("error-message")) {
-            errorDiv.textContent = ""; // Clear error message
-            errorDiv.style.display = "none"; // Hide error message
+            errorDiv.textContent = ""; 
+            errorDiv.style.display = "none"; 
         }
     });
 }
 
+
  //function to clear modal fields
  function clearModalFields() {
-    document.getElementById("group").value = "PZ-21"; // or default
+    document.getElementById("group").value = "PZ-21"; 
     document.getElementById("first-name").value = "";
     document.getElementById("last-name").value = "";
     document.getElementById("gender").value = "M";
@@ -77,6 +77,7 @@ function confirmDelete() {
 
 //close add/edit student modal
 function closeModal() {
+    clearErrors(); 
     document.querySelector(".modal").style.display = "none";
 }
 
@@ -190,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function addEditButtonEventListeners() {
             const rows = document.querySelectorAll("tbody tr");
-        
+            clearErrors(); 
             rows.forEach(function (row) {
                 const editButton = row.querySelector(".edit-btn");
                 if (editButton) {
@@ -201,23 +202,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         let birthday = row.querySelector("td:nth-child(5)").innerText;
                         const studentId = row.querySelector("td:nth-child(8)").innerText;
 
-                        // Convert "DD-MM-YYYY" to "YYYY-MM-DD" for input[type="date"]
                         const [day, month, year] = birthday.split("-");
                         birthday = `${year}-${month}-${day}`;
         
-                        // Fill the modal inputs
+
                         document.getElementById("group").value = group;
                         document.getElementById("first-name").value = fullName[0];
                         document.getElementById("last-name").value = fullName[1] || "";
                         document.getElementById("gender").value = gender;
                         document.getElementById("birthday").value = birthday;
                         document.getElementById("student-id").value = studentId;
-                        // Set the row being edited
                         editingRow = row;
         
-                        // Open modal in edit mode
                         document.querySelector(".modal-header h2").innerText = "Edit Student";
-                        document.querySelector(".create-btn").innerText = "Update Student";  // Change button text
+                        document.querySelector(".create-btn").innerText = "Save";  // Change button text
                         modal.style.display = "flex";
                     });
                 }
@@ -249,12 +247,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to show error message and highlight invalid fields
 function showError(inputElement, message) {
-    const errorDiv = inputElement.nextElementSibling; // Find the error message div (it comes right after the input)
+    const errorDiv = inputElement.nextElementSibling; 
     if (errorDiv && errorDiv.classList.contains("error-message")) {
-        inputElement.style.borderColor = "red"; // Change border color to red
-        errorDiv.textContent = message; // Set the error message text
-        errorDiv.style.color = "red"; // Set error message color to red
-        errorDiv.style.display = "block"; // Ensure the error message is visible
+        inputElement.style.borderColor = "red"; 
+        errorDiv.textContent = message; 
+        errorDiv.style.color = "red"; 
+        errorDiv.style.display = "block"; 
     }
 }
 
@@ -355,7 +353,7 @@ createBtn.addEventListener("click", function () {
 createBtn.addEventListener("click", function () {
     let isValid = true;
     let isFilledIn = true;
-    clearErrors(); // Clear any previous errors
+    clearErrors(); 
 
     const group = document.getElementById("group").value;
     const firstName = document.getElementById("first-name").value.trim();
@@ -372,7 +370,7 @@ createBtn.addEventListener("click", function () {
         showError(document.getElementById("first-name"), "First name is required.");
         isValid = false;
         isFilledIn = false;
-    } else if (!/^[A-Z]/.test(firstName)) { // Check if first name starts with a capital letter
+    } else if (!/^[A-Z]/.test(firstName)) { 
         showError(document.getElementById("first-name"), "First name must start with a capital letter.");
         isValid = false;
     }
@@ -381,7 +379,7 @@ createBtn.addEventListener("click", function () {
         showError(document.getElementById("last-name"), "Last name is required.");
         isValid = false;
         isFilledIn = false;
-    } else if (!/^[A-Z]/.test(lastName)) { // Check if last name starts with a capital letter
+    } else if (!/^[A-Z]/.test(lastName)) { 
         showError(document.getElementById("last-name"), "Last name must start with a capital letter.");
         isValid = false;
     }
@@ -394,15 +392,15 @@ createBtn.addEventListener("click", function () {
 
     if (!isFilledIn) {
         alert("Please fill in all required fields.");
-        return; // Do not proceed with row creation
+        return; 
     }
 
-    // If any field is invalid, prevent further execution and show error messages
+   
     if (!isValid) {
-        return; // Do not proceed with row creation
+        return; 
     }
 
-    // If editing a student (editingRow is not null), update the row
+    
     if (editingRow) {
         const group = document.getElementById("group").value;
         const firstName = document.getElementById("first-name").value.trim();
@@ -413,13 +411,13 @@ createBtn.addEventListener("click", function () {
         const [year, month, day] = birthday.split("-");
         const formattedBirthday = `${day}-${month}-${year}`;
     
-        // Update the row content
+       
         editingRow.querySelector("td:nth-child(2)").innerText = group;
         editingRow.querySelector("td:nth-child(3)").innerText = `${firstName} ${lastName}`;
         editingRow.querySelector("td:nth-child(4)").innerText = gender;
         editingRow.querySelector("td:nth-child(5)").innerText = formattedBirthday;
     
-        // Create a JSON object for the edited student
+      
         const editedStudent = {
             id: studentId,
             group: group,
@@ -429,14 +427,14 @@ createBtn.addEventListener("click", function () {
             birthday: formattedBirthday
         };
     
-        // Log the JSON object to the console
+       
         console.log("Edited Student: ", JSON.stringify(editedStudent));
     
-        // Reset editingRow to null after updating
+        
         editingRow = null;
     } else {
         currentId = currentId + 1;
-        // If not editing, create a new row (same logic as before)
+        
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
             <td><input type="checkbox"></td>
@@ -452,7 +450,7 @@ createBtn.addEventListener("click", function () {
             <td style="display:none;">${currentId}</td>
         `;
         const newStudent = {
-            id: currentId, // The ID of the newly created student
+            id: currentId, 
             group: group,
             firstName: firstName,
             lastName: lastName,
@@ -469,9 +467,9 @@ createBtn.addEventListener("click", function () {
     }
 
     modal.style.display = "none";
-    clearModalFields(); // Clear modal fields after successful submission
-    document.querySelector(".modal-header h2").innerText = "Add Student"; // Reset header to default
-    document.querySelector(".create-btn").innerText = "Create";  // Reset button text
+    clearModalFields(); 
+    document.querySelector(".modal-header h2").innerText = "Add Student"; 
+    document.querySelector(".create-btn").innerText = "Create";  
 });
 
 

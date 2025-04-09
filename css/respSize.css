@@ -19,7 +19,7 @@
         display: block;
     }
     table {
-        min-width: 600px; /* Set a minimum width to avoid shrinking too much */
+        min-width: 600px;
         margin-right: 5px;
         overflow-x: auto;
         width: 100%;
@@ -28,8 +28,8 @@
 
     .table-container {
         padding: 0;
-        max-width: 90%; /* Limit container width */
-        overflow-x: auto; /* Enable horizontal scrolling */
+        max-width: 90%; 
+        overflow-x: auto; 
         margin-right: 5px;
     }
 
@@ -59,12 +59,6 @@
         padding-top: 60px;
     }
 
-    th:nth-child(4), 
-    td:nth-child(4), 
-    th:nth-child(6),
-    td:nth-child(6) { 
-        display: none;
-    }
 
 }
 
