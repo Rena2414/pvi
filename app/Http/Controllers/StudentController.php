@@ -53,7 +53,7 @@ class StudentController extends Controller
 
      try {
         $student = new Student();
-        $student->username = strtolower($validated['username']);
+        $student->login = strtolower($validated['username']);
         $student->password = bcrypt($validated['password']);
         $student->group = $groupMap[$validated['group']] ?? null;
         $student->name = $validated['first-name'];
@@ -69,7 +69,7 @@ class StudentController extends Controller
 
     // Create and save student
 
-     Session::put('login_name', $student->username);
+     Session::put('login_name', $student->login);
 
     return redirect()->route('students.index')->with('success', 'Student added successfully!');
 }
