@@ -205,6 +205,12 @@ function handleCheckboxChange() {
     }
 });
 
+  // Toggle side panel when hamburger menu is clicked
+    document.querySelector('.hamburger-menu').addEventListener('click', function () {
+    document.querySelector('.side-panel').classList.toggle('hidden');
+    document.querySelector('.main-content').classList.toggle('shifted');
+    });
+
 </script>
 
 
