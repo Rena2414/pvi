@@ -228,7 +228,6 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-image: url("assets/images/pohoda.png");
     background-size: cover;
     margin-right: 10px;
 }
@@ -238,7 +237,6 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-image: url("assets/images/sherlock.jpg");
     background-size: cover;
     margin-right: 10px;
 }
@@ -247,7 +245,6 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-image: url("assets/images/cat.jpg");
     background-size: cover;
     margin-right: 10px;
 }
