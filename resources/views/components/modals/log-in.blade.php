@@ -28,12 +28,13 @@
             <div class="modal-footer">
                 <button type="button" class="cancel-btn" onclick="closeLoginModal()">Cancel</button>
                 <button type="submit" class="log-in-btn-modal">Log In</button>
+                
+                <div class="text-center mt-2">
+                    <button type="button" class="register-btn" onclick="openRegisterModal()">Don't have an account? Register</button>
+                </div>
             </div>
         </form>
 
-        <div class="text-center mt-2">
-             <button type="button" class="cancel-btn" onclick="openRegisterModal()">Register</button>
-        </div>
     </div>
 </div>
 

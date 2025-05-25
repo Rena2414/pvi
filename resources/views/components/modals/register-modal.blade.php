@@ -9,7 +9,7 @@
             @csrf
             <input type="hidden" name="_method" value="POST" id="form-method">
 
-            <div class="modal-body">
+            <div class="register-inut">
                 <input type="hidden" id="student-id" name="id">
 
                 <!-- Username -->
@@ -24,6 +24,43 @@
                     <input type="password" id="login-password" name="password" required>
                 </div>
 
+                <div class="two-inputs">
+                     <!-- First Name -->
+                    <div>
+                        <label for="first-name">First Name</label>
+                        <input type="text" id="first-name" name="first-name" required>
+                    </div>
+
+                <!-- Last Name -->
+                    <div>
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" name="last-name" required>
+                    </div>
+                </div>
+
+               <div class="two-inputs">
+                     <!-- Gender -->
+                <div>
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                </div>
+
+                <!-- Birthday -->
+                    <div>
+                        <label for="birthday">Birthday</label>
+                        <input type="date" id="birthday" name="birthday" required>
+                    </div>
+                </div>
+
+    
+
+                
+
+                
+
                 <!-- Group -->
                 <div>
                     <label for="group">Group</label>
@@ -35,33 +72,6 @@
                         <option value="PZ-25">PZ-25</option>
                         <option value="PZ-26">PZ-26</option>
                     </select>
-                </div>
-
-                <!-- First Name -->
-                <div>
-                    <label for="first-name">First Name</label>
-                    <input type="text" id="first-name" name="first-name" required>
-                </div>
-
-                <!-- Last Name -->
-                <div>
-                    <label for="last-name">Last Name</label>
-                    <input type="text" id="last-name" name="last-name" required>
-                </div>
-
-                <!-- Gender -->
-                <div>
-                    <label for="gender">Gender</label>
-                    <select id="gender" name="gender" required>
-                        <option value="M">Male</option>
-                        <option value="F">Female</option>
-                    </select>
-                </div>
-
-                <!-- Birthday -->
-                <div>
-                    <label for="birthday">Birthday</label>
-                    <input type="date" id="birthday" name="birthday" required>
                 </div>
             </div>
 

@@ -116,6 +116,13 @@ table td:not(:first-child) {
     text-overflow: ellipsis;
 }
 
+table td:first-child {
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 thead tr:first-child td:first-child {
     border-top-left-radius: 1.5vh;
 }

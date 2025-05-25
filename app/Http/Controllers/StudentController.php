@@ -60,7 +60,7 @@ class StudentController extends Controller
         $student->lastname = $validated['last-name'];
         $student->gender = $genderMap[$validated['gender']] ?? null;
         $student->birthday = $validated['birthday'];
-        $student->status = 0;
+        $student->status = 1;
         $student->save();
 
     } catch (\Exception $e) {

@@ -23,11 +23,11 @@
 
     <script>
     function openLoginModal() {
-        document.getElementById("login-modal").style.display = "block";
+        document.getElementById("login-modal").style.display = "flex";
     }
 
       function openRegisterModal() {
-        document.getElementById("register-modal").style.display = "block";
+        document.getElementById("register-modal").style.display = "flex";
     }
 
     function closeLoginModal() {

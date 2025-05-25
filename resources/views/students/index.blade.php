@@ -130,7 +130,7 @@ function openModal(mode = 'add', student = null) {
         method.value = 'POST';
     }
 
-    modal.style.display = "block";
+    modal.style.display = "flex";
 }
 
 function closeModal() {
@@ -149,7 +149,7 @@ function clearModalFields() {
 function openDeleteModal(studentId, studentName) {
     deleteStudentId = studentId;
     document.getElementById('delete-modal-text').innerText = `Are you sure you want to delete ${studentName}?`;
-    document.getElementById('delete-confirmation-modal').style.display = 'block';
+    document.getElementById('delete-confirmation-modal').style.display = 'flex';
 }
 
 function closeDeleteModal() {
@@ -197,7 +197,7 @@ function handleDeleteClick(studentId, studentName) {
             `Are you sure you want to delete ${studentName}?`;
     }
 
-    document.getElementById("delete-confirmation-modal").style.display = "block";
+    document.getElementById("delete-confirmation-modal").style.display = "flex";
 }
 
 function toggleSelectAll(masterCheckbox) {
@@ -248,7 +248,7 @@ function handleCheckboxChange() {
 
 
       function openAddModal() {
-        document.getElementById("add-modal").style.display = "block";
+        document.getElementById("add-modal").style.display = "flex";
     }
 
     function closeAddModal() {
