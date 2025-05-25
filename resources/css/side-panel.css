@@ -1,0 +1,47 @@
+.hamburger-menu {
+    font-size: 30px;
+    cursor: pointer;
+    margin-left: 0; 
+}
+
+.side-panel {
+    width: 200px;
+    height: 100vh;
+    background-color: #015396; 
+    color: white;
+    position: fixed;
+    top: 60px; 
+    left: 0;
+    transition: transform 0.3s ease-in-out;
+    padding: 20px; 
+}
+
+.side-panel.hidden {
+    transform: translateX(-100%);
+}
+
+.side-panel ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.side-panel li:hover {
+    transform: scale(1.1); 
+    font-size: 20px; 
+    color: #eaf4ff; 
+}
+
+.side-panel li {
+    margin: 15px 0;
+}
+
+.side-panel a {
+    text-decoration: none;
+    color: white;
+    font-weight: normal;
+    display: block;
+    padding: 10px; 
+}
+.side-panel b {
+    font-weight: bold;
+}

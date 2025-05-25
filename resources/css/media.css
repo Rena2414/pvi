@@ -1,0 +1,112 @@
+
+@media (min-width: 320px) and (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+
+
+    .main-content {
+        margin-left: 0;
+        padding-top: 60px;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    body {
+        font-size: 16px;
+        padding: 10px;
+    }
+    .hamburger-menu {
+        display: block;
+    }
+    table {
+        min-width: 600px;
+        margin-right: 5px;
+        overflow-x: auto;
+        width: 100%;
+
+    }
+
+    .table-container {
+        padding: 0;
+        max-width: 90%; 
+        overflow-x: auto; 
+        margin-right: 5px;
+    }
+
+    th, td {
+        padding: 0;
+        text-align: center;
+        border: 1px solid #bfdcfd;
+        border-collapse: separate;
+    }
+    
+
+
+    .side-panel {
+        width: 140px;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        transform: translateX(-100%);
+    }
+
+    .side-panel.hidden {
+        transform: translateX(0); 
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding-top: 60px;
+    }
+
+
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    body {
+        font-size: 18px;
+        padding: 15px;
+    }
+
+    .message, .dropdown2{
+        font-size: 16px;
+    }
+
+    .main-content {
+        padding-top: 60px;
+    }
+}
+
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+    body {
+        font-size: 20px;
+        padding: 20px;
+    }
+
+    .message, .dropdown2{
+        font-size: 16px;
+    }
+
+    .main-content {
+        padding-top: 40px;
+    }
+
+}
+
+@media (min-width: 1441px) and (max-width: 1920px) {
+    body {
+        font-size: 22px;
+        padding: 25px;
+    }
+
+    .message, .dropdown2{
+        font-size: 16px;
+    }
+
+    .main-content {
+        padding-top: 40px;
+    }
+
+}

@@ -1,0 +1,134 @@
+.status-circle {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+.green-status {
+    background-color: rgb(167, 255, 99);
+}
+
+.grey-status {
+    background-color: rgb(120, 120, 120);
+}
+
+.plus-button {
+    position: fixed; 
+    top: 100px; 
+    right: 20px; 
+    padding: 0; 
+    background-color: #007BC7;
+    border-radius: 1.2vh;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    width: 40px; 
+    height: 40px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    
+}
+
+
+
+.plus-button:hover {
+    background-color: #003E80;
+}
+
+table {
+    width: 100%;
+    text-align: center;
+    min-width: 600px; 
+    table-layout: auto;
+    border-collapse: collapse;
+}
+
+
+
+
+
+
+
+.edit-btn, .delete-btn {
+    width: 25px;
+    height: 25px;
+    background-color: #007BC7;
+    border-radius: 1.1vh;
+    border: none;
+    cursor: pointer;
+    background-size: 60%; 
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.edit-btn:disabled, .delete-btn:disabled {
+    background-color: #eaf4ff; 
+    cursor: not-allowed; 
+    pointer-events: none;
+
+}
+
+.edit-btn:hover, .delete-btn:hover {
+    background-color: #003E80;
+}
+
+.edit-btn {
+    background-image: url("assets/images/edit.png");
+}
+
+.delete-btn {
+    background-image: url("assets/images/delete.png");
+}
+
+
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #bfdcfd;
+    border-collapse: separate;
+    word-wrap: break-word; 
+    word-break: break-all;
+    /*overflow: hidden;*/
+}
+
+thead tr:first-child td:first-child {
+    border-top-left-radius: 1.5vh;
+}
+
+thead tr:first-child td:last-child {
+    border-top-right-radius: 1.5vh;
+}
+
+tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 1.5vh;
+}
+
+tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 1.5vh;
+}
+
+.select {
+    font-size: 0; 
+}
+
+.select input {
+    font-size: 16px; 
+}
+
+
+
+.table-container {
+    margin-top: 20px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    overflow-x: auto; /* Enable scrolling within the container */
+    width: 100%; /* Restrict the container width */
+    margin: 0 auto; /* Center the table */
+    max-width: 100vw;
+
+}
+

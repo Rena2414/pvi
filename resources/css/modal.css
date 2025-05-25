@@ -1,0 +1,206 @@
+
+.modal {
+    display: none; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+    padding-top: 20px;
+}
+
+
+.Delmodal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); 
+    justify-content: center;
+    align-items: center;
+}
+
+/* Delete Modal Box */
+.Delmodal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center;
+}
+
+
+.Delmodal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    position: relative;
+}
+
+.Delmodal-header {
+    position: relative; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+
+.Delmodal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.delete-cancel-btn, .delete-confirm-btn, .log-in-btn{
+    background: #007BC7;
+    border-radius: 1.2vh;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 120px;
+    height: 30px;
+}
+
+.delete-cancel-btn:hover, .delete-confirm-btn:hover{
+    background: #003E80;
+}
+
+
+.modal-footer .log-in-btn:hover{
+    transform: none;
+    font-size: 20px; 
+    color: #eaf4ff; 
+    background: #003E80;
+}
+
+.Delclose-btn{
+    position: absolute;
+    right: 10px;
+    background: #007BC7;
+    border-radius: 1.2vh;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+
+.Delclose-btn:hover{
+    background: #003E80;
+}
+
+
+.modal-header{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.close-btn{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #007BC7;
+    border-radius: 1.2vh;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+}
+
+.close-btn:hover{
+    background: #003E80;
+}
+
+.cancel-btn, .create-btn{
+    background: #007BC7;
+    border-radius: 1.2vh;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 120px;
+    height: 30px;
+    margin: 10px;
+}
+
+.cancel-btn:hover, .create-btn:hover{
+    background: #003E80;
+}
+
+
+/* Modal Background */
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    margin: 15px; 
+}
+
+.modal-body div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px; 
+}
+
+.modal-body label {
+    min-width: 100px; 
+    text-align: left;
+    color: black;
+}
+
+.modal-content {
+    color: black; /* or your preferred color */
+}
+
+.modal-body input,
+.modal-body select {
+    flex-grow: 1; 
+}
+
+
+
+.log-in-btn:hover{
+    transform: scale(1.1); 
+    font-size: 20px; 
+    color: #eaf4ff; 
+}
+
+.error-message {
+    display: none; /* Hidden by default */
+    font-size: 12px;
+    color: red;
+    margin-top: 5px;
+}
