@@ -224,9 +224,12 @@
 }
 
 .error-message {
-    display: none; /* Hidden by default */
-    font-size: 12px;
     color: red;
-    margin-top: 5px;
+    font-size: 0.85em;
+    margin-top: 4px;
+    display: none;
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
 }
 

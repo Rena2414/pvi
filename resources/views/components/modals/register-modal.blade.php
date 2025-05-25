@@ -14,30 +14,33 @@
 
                 <!-- Username -->
                 <div>
-                    <label for="login-username">Username</label>
-                    <input type="text" id="login-username" name="username" required>
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" name="username" required>
                 </div>
-
+                <div class="error-message" id="login-error" style="color:red; font-size:0.9em;"></div>
                 <!-- Password -->
                 <div>
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" required>
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" name="password" required>
                 </div>
-
+                <div class="error-message" id="password-error" style="color:red; font-size:0.9em;"></div>
                 <div class="two-inputs">
                      <!-- First Name -->
                     <div>
                         <label for="first-name">First Name</label>
                         <input type="text" id="first-name" name="first-name" required>
+                        
                     </div>
 
                 <!-- Last Name -->
                     <div>
                         <label for="last-name">Last Name</label>
                         <input type="text" id="last-name" name="last-name" required>
+                        
                     </div>
                 </div>
-
+                <div class="error-message" id="first-name-error" style="color:red; font-size:0.9em;"></div>
+                <div class="error-message" id="last-name-error" style="color:red; font-size:0.9em;"></div>
                <div class="two-inputs">
                      <!-- Gender -->
                 <div>
