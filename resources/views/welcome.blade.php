@@ -28,6 +28,9 @@
             document.getElementById("login-modal").style.display = "flex";
         @endif
 
+           @if ($errors->has('register'))
+        document.getElementById("register-modal").style.display = "flex";
+    @endif
 
 
         document.getElementById('student-form').addEventListener('submit', function(event) {

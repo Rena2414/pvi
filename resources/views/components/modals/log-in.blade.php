@@ -21,7 +21,7 @@
                 <div class="error-message">
                 {{ $errors->first('login') }}
                 </div>
-@endif
+                @endif
             </div>
 
 

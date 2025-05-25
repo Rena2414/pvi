@@ -51,6 +51,16 @@ class StudentController extends Controller
         'F' => 1,
     ];
 
+     $existingStudent = Student::where('name', $validated['first-name'])
+        ->where('lastname', $validated['last-name'])
+        ->where('group', $groupMap[$validated['group']] ?? null)
+        ->first();
+
+    if ($existingStudent) {
+        return redirect()->back()
+            ->withErrors(['register' => 'A student with the same name, last name, and group already exists.'])
+            ->withInput();
+    }
      try {
         $student = new Student();
         $student->login = strtolower($validated['username']);
@@ -65,6 +75,9 @@ class StudentController extends Controller
 
     } catch (\Exception $e) {
         dd("Error saving student: " . $e->getMessage());
+        return redirect()->back()
+            ->withErrors(['register' => 'A student with the same name, last name, and group already exists.'])
+            ->withInput();
     }
 
     // Create and save student
