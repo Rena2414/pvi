@@ -27,7 +27,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="cancel-btn" onclick="closeLoginModal()">Cancel</button>
-                <button type="submit" class="log-in-btn">Log In</button>
+                <button type="submit" class="log-in-btn-modal">Log In</button>
             </div>
         </form>
 

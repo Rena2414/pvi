@@ -1,5 +1,4 @@
 @props(['loginName'])
-{{ $loginName ?? '' }}
 <nav class="side-panel">
     <ul>
 

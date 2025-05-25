@@ -21,5 +21,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
     View::share('loginName', Session::get('login_name'));
+    View::composer('*', function ($view) {
+        $view->with('loginName', Session::get('login_name'));
+    });
     }
 }

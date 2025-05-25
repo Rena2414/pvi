@@ -35,10 +35,24 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::get('/dashboard', function () {
-    return view('students.dashboard');
+    $loginName = Session::get('login_name');
+    return view('students.dashboard', compact('loginName'));
 });
 
-Route::get('/tasks', function () {
-    return view('students.tasks');
+Route::get('/messages', function () {
+    $loginName = Session::get('login_name');
+    return view('students.messages', compact('loginName'));
 });
+
+
+Route::get('/tasks', function () {
+    $loginName = Session::get('login_name');
+    return view('students.tasks', compact('loginName'));
+});
+
+Route::get('/profile', function () {
+    $loginName = Session::get('login_name');
+    return view('students.profile', compact('loginName'));
+});
+
 

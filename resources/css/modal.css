@@ -81,7 +81,7 @@
     margin-top: 15px;
 }
 
-.delete-cancel-btn, .delete-confirm-btn, .log-in-btn{
+.delete-cancel-btn, .delete-confirm-btn{
     background: #007BC7;
     border-radius: 1.2vh;
     color: white;

@@ -211,6 +211,39 @@ function handleCheckboxChange() {
     document.querySelector('.main-content').classList.toggle('shifted');
     });
 
+
+
+document.querySelector('.plane-icon').addEventListener('dblclick', function() {
+    this.classList.add('animate');
+    document.getElementById('notification-circle').style.opacity = 1;
+    document.querySelector('.notifications').classList.add('no-hover');
+
+    setTimeout(() => {
+        this.classList.remove('animate');
+    }, 500);
+
+    setTimeout(() => {
+        document.querySelector('.notifications').classList.remove('no-hover');
+    }, 750);
+});
+
+
+let clickTimer = null;
+
+//function to distinguish between click and double click
+document.querySelector(".plane-icon").addEventListener("click", function () {
+    if (clickTimer) {
+        clearTimeout(clickTimer); 
+        clickTimer = null;
+        return;
+    }
+
+    clickTimer = setTimeout(() => {
+        document.getElementById('notification-circle').style.opacity = 1;
+        window.location.href = "/messages"; 
+        clickTimer = null;
+    }, 300); 
+});
 </script>
 
 
