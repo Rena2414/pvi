@@ -22,6 +22,13 @@
 
 
     <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        @if ($errors->has('login'))
+            document.getElementById("login-modal").style.display = "flex";
+        @endif
+    });
+
     function openLoginModal() {
         document.getElementById("login-modal").style.display = "flex";
     }
