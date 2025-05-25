@@ -6,7 +6,7 @@
     <div class="main-content">
         <div class="UpperMainCont">
             <h1 class="Labelh1">Students</h1>
-            <button class="plus-button" onclick="openAddModal()">+</button>
+            <!--<button class="plus-button" onclick="openAddModal()">+</button>-->
         </div>
 
     <x-student-table>
@@ -278,6 +278,10 @@ function handleCheckboxChange() {
     }
 });
 
+document.querySelector('.hamburger-menu').addEventListener('click', function () {
+    document.querySelector('.side-panel').classList.toggle('hidden');
+    document.querySelector('.main-content').classList.toggle('shifted');
+    });
 
 </script>
 
