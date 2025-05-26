@@ -28,6 +28,52 @@
 
   <script>
 
+ document.addEventListener('DOMContentLoaded', function() {
+
+        @if ($errors->has('register'))
+
+        document.getElementById("add-modal").style.display = "flex";
+
+        @endif
+
+
+
+        document.getElementById('student-form').addEventListener('submit', function(event) {
+    // Clear previous errors
+    document.getElementById('first-name-error').textContent = '';
+    document.getElementById('last-name-error').textContent = '';
+
+
+    
+    const firstName = document.getElementById('first-name').value.trim();
+    const lastName = document.getElementById('last-name').value.trim();
+
+    const namePattern = /^[A-Z][a-z]*$/;
+
+    let isValid = true;
+
+    if (!namePattern.test(firstName)) {
+        const firstNameError = document.getElementById('first-name-error');
+        firstNameError.textContent = 'First name must start with a capital letter and contain only letters.';
+        firstNameError.style.display = 'block'; // <-- this line is key
+        
+        isValid = false;
+    }
+
+    if (!namePattern.test(lastName)) {
+        const lastNameError = document.getElementById('last-name-error');
+        lastNameError.textContent = 'Last name must start with a capital letter and contain only letters.';
+        lastNameError.style.display = 'block'
+        isValid = false;
+    }
+
+    if (!isValid) {
+        event.preventDefault(); // prevent form submission
+    }
+    });
+    });
+
+
 
 window.onclick = function(event) {
     const modal = document.querySelector(".modal");

@@ -111,13 +111,30 @@ public function update(Request $request, $id)
     ];
     $genderMap = ['M' => 0, 'F' => 1];
 
-    $student = Student::findOrFail($id);
-    $student->group = $groupMap[$validated['group']] ?? 1;
-    $student->name = $validated['first-name'];
-    $student->lastname = $validated['last-name'];
-    $student->gender = $genderMap[$validated['gender']];
-    $student->birthday = $validated['birthday'];
-    $student->save();
+    $existingStudent = Student::where('name', $validated['first-name'])
+        ->where('lastname', $validated['last-name'])
+        ->where('group', $groupMap[$validated['group']] ?? null)
+        ->first();
+
+    if ($existingStudent) {
+        return redirect()->back()
+            ->withErrors(['register' => 'A student with the same name, last name, and group already exists.'])
+            ->withInput();
+    }
+    try{
+            $student = Student::findOrFail($id);
+            $student->group = $groupMap[$validated['group']] ?? 1;
+            $student->name = $validated['first-name'];
+            $student->lastname = $validated['last-name'];
+            $student->gender = $genderMap[$validated['gender']];
+            $student->birthday = $validated['birthday'];
+            $student->save();
+    }catch (\Exception $e) {
+        return redirect()->back()
+            ->withErrors(['register' => 'A student with the same name, last name, and group already exists.'])
+            ->withInput();
+    }
+
 
     return redirect()->route('students.index')->with('success', 'Student updated successfully!');
 }

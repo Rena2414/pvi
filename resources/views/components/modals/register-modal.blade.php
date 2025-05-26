@@ -80,10 +80,10 @@
                     </select>
                 </div>
                 @if ($errors->has('register'))
-    <div class="error-message">
-        {{ $errors->first('register') }}
-    </div>
-@endif
+                    <div class="error-message">
+                        {{ $errors->first('register') }}
+                    </div>
+                @endif
             </div>
 
             <div class="modal-footer">

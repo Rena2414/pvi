@@ -26,12 +26,13 @@
                     <label for="first-name">First Name</label>
                     <input type="text" id="first-name" name="first-name">
                 </div>
+                <div class="error-message" id="first-name-error" style="color:red; font-size:0.9em;"></div>
 
                 <div>
                     <label for="last-name">Last Name</label>
                     <input type="text" id="last-name" name="last-name">
                 </div>
-
+                <div class="error-message" id="last-name-error" style="color:red; font-size:0.9em;"></div>
                 <div>
                     <label for="gender">Gender</label>
                     <select id="gender" name="gender">
@@ -44,6 +45,12 @@
                     <label for="birthday">Birthday</label>
                     <input type="date" id="birthday" name="birthday">
                 </div>
+
+                @if ($errors->has('register'))
+                    <div class="error-message">
+                        {{ $errors->first('register') }}
+                    </div>
+                @endif
             </div>
 
             <div class="modal-footer">
