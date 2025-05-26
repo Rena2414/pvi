@@ -15,9 +15,12 @@
                 <!-- Username -->
                 <div>
                     <label for="reg-username">Username</label>
-                    <input type="text" id="reg-username" name="username" required>
+                    <input type="text" id="reg-username" name="username" value="{{ old('username') }}" required>
                 </div>
                 <div class="error-message" id="login-error" style="color:red; font-size:0.9em;"></div>
+                @error('username')
+                <div class="error-message" style="color:red; font-size:0.9em;">{{ $message }}</div>
+                @enderror
                 <!-- Password -->
                 <div>
                     <label for="reg-password">Password</label>

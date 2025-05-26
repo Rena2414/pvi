@@ -25,13 +25,15 @@ class StudentController extends Controller
    
     // Validate inputs
      $validated = $request->validate([
-        'username' => 'required|string|max:255|unique:students,login',
-        'password' => 'required|string|min:8',
-        'group' => 'required|string',
-        'first-name' => 'required|string|max:255',
-        'last-name' => 'required|string|max:255',
-        'gender' => 'required|in:M,F',
-        'birthday' => 'required|date',
+    'username' => 'required|string|max:255|unique:students,login',
+    'password' => 'required|string|min:8',
+    'group' => 'required|string',
+    'first-name' => 'required|string|max:255',
+    'last-name' => 'required|string|max:255',
+    'gender' => 'required|in:M,F',
+    'birthday' => 'required|date',
+    ], [
+    'username.unique' => 'This username is already taken. Please choose another.',
     ]);
 
     // Map group string to integer (e.g., "PZ-21" → 1)
