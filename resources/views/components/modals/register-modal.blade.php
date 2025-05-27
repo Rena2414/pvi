@@ -33,7 +33,7 @@
                 @enderror
                 
                 <div class="two-inputs">
-                     <!-- First Name -->
+                <!-- First Name -->
                     <div>
                         <label for="first-name">First Name</label>
                         <input type="text" id="first-name" name="first-name" required>

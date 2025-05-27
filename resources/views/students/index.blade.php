@@ -6,7 +6,7 @@
     <div class="main-content">
         <div class="UpperMainCont">
             <h1 class="Labelh1">Students</h1>
-            <button class="plus-button" onclick="openAddModal()">+</button>
+            <button class="plus-button" onclick="openModal('add')">+</button>
         </div>
 
     <x-student-table>
@@ -31,6 +31,29 @@
 
 
 
+    document.addEventListener('DOMContentLoaded', function() {
+
+
+        @if ($errors->has('register'))
+        openModal('add');
+        @endif
+
+    
+
+        @if ($errors->has('first-name'))
+
+
+        openModal('add');
+        @endif
+        @if ($errors->has('last-name'))
+
+        openModal('add');
+
+        @endif
+
+        
+
+    });
 
 window.onclick = function(event) {
     const modal = document.querySelector(".modal");
@@ -114,6 +137,8 @@ function openModal(mode = 'add', student = null) {
     const submitBtn = document.getElementById("submit-btn");
 
     clearModalFields();
+
+    
 
     document.getElementById("mode").value = mode;
 
