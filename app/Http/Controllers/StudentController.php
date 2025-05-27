@@ -115,6 +115,7 @@ class StudentController extends Controller
     // Create and save student
        if ($mode === 'register') {
         Session::put('login_name', $student->login);
+        Session::put('student_id', $student->id);
     }
 
 
