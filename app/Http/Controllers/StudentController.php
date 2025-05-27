@@ -25,15 +25,40 @@ class StudentController extends Controller
    
     // Validate inputs
      $validated = $request->validate([
-    'username' => 'required|string|max:255|unique:students,login',
-    'password' => 'required|string|min:8',
+    'username' => [
+        'required',
+        'string',
+        'max:255',
+        'unique:students,login',
+        'regex:/^[a-zA-Z0-9_.]{4,}$/'
+    ],
+    'password' => [
+        'required',
+        'string',
+        'min:8',
+        'regex:/^.{8,}$/'
+    ],
     'group' => 'required|string',
-    'first-name' => 'required|string|max:255',
-    'last-name' => 'required|string|max:255',
+    'first-name' => [
+        'required',
+        'string',
+        'max:255',
+        'regex:/^[A-Z][a-zA-Z\'\-]*$/'
+    ],
+    'last-name' => [
+        'required',
+        'string',
+        'max:255',
+        'regex:/^[A-Z][a-zA-Z\'\-]*$/'
+    ],
     'gender' => 'required|in:M,F',
     'birthday' => 'required|date',
     ], [
     'username.unique' => 'This username is already taken. Please choose another.',
+    'username.regex' => 'Username must be at least 4 characters and contain only letters, numbers, underscores, or dots.',
+    'password.regex' => 'Password must be at least 8 characters long.',
+    'first-name.regex' => 'First name must start with a capital letter and contain only letters, apostrophes, or hyphens.',
+    'last-name.regex' => 'Last name must start with a capital letter and contain only letters, apostrophes, or hyphens.',
     ]);
 
     // Map group string to integer (e.g., "PZ-21" → 1)

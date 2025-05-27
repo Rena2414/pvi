@@ -38,61 +38,37 @@
 
         @endif
 
+         @if ($errors->has('password'))
+
+        document.getElementById("register-modal").style.display = "flex";
+
+        @endif
+
+        @if ($errors->has('first-name'))
+
+        document.getElementById("register-modal").style.display = "flex";
+
+        @endif
+        @if ($errors->has('last-name'))
+
+        document.getElementById("register-modal").style.display = "flex";
+
+        @endif
+
+        
 
 
         document.getElementById('student-form').addEventListener('submit', function(event) {
     // Clear previous errors
-    document.getElementById('first-name-error').textContent = '';
-    document.getElementById('last-name-error').textContent = '';
-    document.getElementById('password-error').textContent = '';
-    document.getElementById('login-error').textContent = '';
+
 
 
     
-    const firstName = document.getElementById('first-name').value.trim();
-    const lastName = document.getElementById('last-name').value.trim();
-    const loginCheck = document.getElementById('reg-username').value.trim();
-    const passCheck = document.getElementById('reg-password').value.trim();
 
-    const namePattern = /^[A-Z][a-z]*$/;
-    const usernamePattern = /^[a-zA-Z0-9_\.]{4,}$/; // Alphanumeric or underscore, min 4 chars
-    const passwordPattern = /^.{8,}$/
 
-    let isValid = true;
 
-    if (!namePattern.test(firstName)) {
-        const firstNameError = document.getElementById('first-name-error');
-        firstNameError.textContent = 'First name must start with a capital letter and contain only letters.';
-        firstNameError.style.display = 'block'; // <-- this line is key
-        
-        isValid = false;
-    }
 
-    if (!namePattern.test(lastName)) {
-        const lastNameError = document.getElementById('last-name-error');
-        lastNameError.textContent = 'Last name must start with a capital letter and contain only letters.';
-        lastNameError.style.display = 'block'
-        isValid = false;
-    }
 
-    if (!usernamePattern.test(loginCheck)) {
-            const error = document.getElementById('login-error');
-            error.textContent = 'Username must be at least 4 characters and contain only letters, numbers, or underscores.';
-            error.style.display = 'block';
-            isValid = false;
-        }
-
-        // Password
-        if (!passwordPattern.test(passCheck)) {
-            const error = document.getElementById('password-error');
-            error.textContent = 'Password must be at least 8 characters long.';
-            error.style.display = 'block';
-            isValid = false;
-        }
-
-    if (!isValid) {
-        event.preventDefault(); // prevent form submission
-    }
     });
     });
 

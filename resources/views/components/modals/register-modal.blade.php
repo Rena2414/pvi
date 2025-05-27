@@ -17,16 +17,21 @@
                     <label for="reg-username">Username</label>
                     <input type="text" id="reg-username" name="username" value="{{ old('username') }}" required>
                 </div>
-                <div class="error-message" id="login-error" style="color:red; font-size:0.9em;"></div>
                 @error('username')
                 <div class="error-message" style="color:red; font-size:0.9em;">{{ $message }}</div>
                 @enderror
+
+
                 <!-- Password -->
                 <div>
                     <label for="reg-password">Password</label>
                     <input type="password" id="reg-password" name="password" required>
                 </div>
-                <div class="error-message" id="password-error" style="color:red; font-size:0.9em;"></div>
+                
+                @error('password')
+                    <div class="error-message" style="color:red; font-size:0.9em;">{{ $message }}</div>
+                @enderror
+                
                 <div class="two-inputs">
                      <!-- First Name -->
                     <div>
@@ -42,8 +47,14 @@
                         
                     </div>
                 </div>
-                <div class="error-message" id="first-name-error" style="color:red; font-size:0.9em;"></div>
-                <div class="error-message" id="last-name-error" style="color:red; font-size:0.9em;"></div>
+                
+                @error('first-name')
+                    <div class="error-message" style="color:red; font-size:0.9em;">{{ $message }}</div>
+                @enderror
+                @error('last-name')
+                    <div class="error-message" style="color:red; font-size:0.9em;">{{ $message }}</div>
+                @enderror
+
                <div class="two-inputs">
                      <!-- Gender -->
                 <div>
