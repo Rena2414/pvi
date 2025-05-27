@@ -8,7 +8,7 @@
         <form id="student-form" method="POST" action="{{ route('students.store') }}">
             @csrf
             <input type="hidden" name="_method" value="POST" id="form-method">
-
+            <input type="hidden" name="mode" value="register">
             <div class="register-inut">
                 <input type="hidden" id="student-id" name="id">
 

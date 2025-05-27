@@ -6,7 +6,7 @@
     <div class="main-content">
         <div class="UpperMainCont">
             <h1 class="Labelh1">Students</h1>
-            <!--<button class="plus-button" onclick="openAddModal()">+</button>-->
+            <button class="plus-button" onclick="openAddModal()">+</button>
         </div>
 
     <x-student-table>

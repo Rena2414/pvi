@@ -22,7 +22,8 @@ class StudentController extends Controller
 
     public function store(Request $request)
 {
-   
+   $mode = $request->input('mode', 'register');
+
     // Validate inputs
      $validated = $request->validate([
     'username' => [
@@ -97,7 +98,11 @@ class StudentController extends Controller
         $student->lastname = $validated['last-name'];
         $student->gender = $genderMap[$validated['gender']] ?? null;
         $student->birthday = $validated['birthday'];
-        $student->status = 1;
+        if ($mode === 'register') {
+            $student->status = 1;
+        }else{
+            $student->status = 0;
+        }
         $student->save();
 
     } catch (\Exception $e) {
@@ -108,8 +113,10 @@ class StudentController extends Controller
     }
 
     // Create and save student
+       if ($mode === 'register') {
+        Session::put('login_name', $student->login);
+    }
 
-     Session::put('login_name', $student->login);
 
     return redirect()->route('students.index')->with('success', 'Student added successfully!');
 }

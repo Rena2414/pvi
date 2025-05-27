@@ -1,7 +1,7 @@
 <div class="modal" id="add-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 id="modal-title">Add Student</h2> <!-- Will change dynamically -->
+            <h2 id="modal-title">Add Student</h2> 
             <button class="close-btn" onclick="closeAddModal()">×</button>
         </div>
         <form id="student-form" method="POST">
