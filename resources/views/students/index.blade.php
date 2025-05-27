@@ -28,50 +28,7 @@
 
   <script>
 
- document.addEventListener('DOMContentLoaded', function() {
 
-        @if ($errors->has('register'))
-
-        document.getElementById("add-modal").style.display = "flex";
-
-        @endif
-
-
-
-        document.getElementById('student-form').addEventListener('submit', function(event) {
-    // Clear previous errors
-    document.getElementById('first-name-error').textContent = '';
-    document.getElementById('last-name-error').textContent = '';
-
-
-    
-    const firstName = document.getElementById('first-name').value.trim();
-    const lastName = document.getElementById('last-name').value.trim();
-
-    const namePattern = /^[A-Z][a-z]*$/;
-
-    let isValid = true;
-
-    if (!namePattern.test(firstName)) {
-        const firstNameError = document.getElementById('first-name-error');
-        firstNameError.textContent = 'First name must start with a capital letter and contain only letters.';
-        firstNameError.style.display = 'block'; // <-- this line is key
-        
-        isValid = false;
-    }
-
-    if (!namePattern.test(lastName)) {
-        const lastNameError = document.getElementById('last-name-error');
-        lastNameError.textContent = 'Last name must start with a capital letter and contain only letters.';
-        lastNameError.style.display = 'block'
-        isValid = false;
-    }
-
-    if (!isValid) {
-        event.preventDefault(); // prevent form submission
-    }
-    });
-    });
 
 
 
@@ -150,13 +107,15 @@ let deleteStudentId = null;
 let selectedIdsToDelete = [];
 
 function openModal(mode = 'add', student = null) {
-    const modal = document.querySelector(".modal");
+    const modal = document.getElementById("add-modal");
     const title = document.getElementById("modal-title");
     const form = document.getElementById("student-form");
     const method = document.getElementById("form-method");
     const submitBtn = document.getElementById("submit-btn");
 
     clearModalFields();
+
+    document.getElementById("mode").value = mode;
 
     if (mode === 'edit' && student) {
         title.textContent = "Edit Student";
@@ -178,7 +137,6 @@ function openModal(mode = 'add', student = null) {
 
     modal.style.display = "flex";
 }
-
 function closeModal() {
     document.querySelector(".modal").style.display = "none";
 }
@@ -330,5 +288,27 @@ document.querySelector('.hamburger-menu').addEventListener('click', function () 
     });
 
 </script>
+
+@if ($errors->any() && old('mode') === 'edit')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const studentData = {
+    id: "{{ old('id') }}",
+    group_text: "{{ old('group') }}",
+    name: "{{ old('first-name') }}",
+    lastname: "{{ old('last-name') }}",
+    gender_text: "{{ old('gender') }}",
+    birthday: "{{ old('birthday') }}"
+        };
+        openModal("edit", studentData); // this should reopen your edit modal
+    });
+</script>
+@elseif ($errors->any())
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        openModal("add");
+    });
+</script>
+@endif
 
 </x-layout>

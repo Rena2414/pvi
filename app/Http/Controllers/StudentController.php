@@ -115,15 +115,27 @@ class StudentController extends Controller
 }
 
 
-
 public function update(Request $request, $id)
 {
     $validated = $request->validate([
         'group' => 'required|string',
-        'first-name' => 'required|string|max:255',
-        'last-name' => 'required|string|max:255',
+        'first-name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[A-Z][a-zA-Z\'\-]*$/'
+        ],
+        'last-name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[A-Z][a-zA-Z\'\-]*$/'
+        ],
         'gender' => 'required|in:M,F',
         'birthday' => 'required|date',
+    ], [
+        'first-name.regex' => 'First name must start with a capital letter and contain only letters, apostrophes, or hyphens.',
+        'last-name.regex' => 'Last name must start with a capital letter and contain only letters, apostrophes, or hyphens.',
     ]);
 
     $groupMap = [
@@ -136,33 +148,52 @@ public function update(Request $request, $id)
     ];
     $genderMap = ['M' => 0, 'F' => 1];
 
+    // Check for existing student with same name/group but different ID
     $existingStudent = Student::where('name', $validated['first-name'])
         ->where('lastname', $validated['last-name'])
         ->where('group', $groupMap[$validated['group']] ?? null)
+        ->where('id', '!=', $id)
         ->first();
 
     if ($existingStudent) {
         return redirect()->back()
             ->withErrors(['register' => 'A student with the same name, last name, and group already exists.'])
-            ->withInput();
-    }
-    try{
-            $student = Student::findOrFail($id);
-            $student->group = $groupMap[$validated['group']] ?? 1;
-            $student->name = $validated['first-name'];
-            $student->lastname = $validated['last-name'];
-            $student->gender = $genderMap[$validated['gender']];
-            $student->birthday = $validated['birthday'];
-            $student->save();
-    }catch (\Exception $e) {
-        return redirect()->back()
-            ->withErrors(['register' => 'A student with the same name, last name, and group already exists.'])
-            ->withInput();
+            ->withInput([
+                'mode' => 'edit',
+                'id' => $id,
+                'group_text' => $validated['group'],
+                'name' => $validated['first-name'],
+                'lastname' => $validated['last-name'],
+                'gender_text' => $validated['gender'],
+                'birthday' => $validated['birthday'],
+            ]);
     }
 
+    try {
+        $student = Student::findOrFail($id);
+        $student->group = $groupMap[$validated['group']] ?? 1;
+        $student->name = $validated['first-name'];
+        $student->lastname = $validated['last-name'];
+        $student->gender = $genderMap[$validated['gender']];
+        $student->birthday = $validated['birthday'];
+        $student->save();
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->withErrors(['register' => 'An unexpected error occurred while updating the student.'])
+            ->withInput([
+                'mode' => 'edit',
+                'id' => $id,
+                'group_text' => $validated['group'],
+                'name' => $validated['first-name'],
+                'lastname' => $validated['last-name'],
+                'gender_text' => $validated['gender'],
+                'birthday' => $validated['birthday'],
+            ]);
+    }
 
     return redirect()->route('students.index')->with('success', 'Student updated successfully!');
 }
+
 
 
 public function destroy($id)

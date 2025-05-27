@@ -6,7 +6,8 @@
         </div>
         <form id="student-form" method="POST">
             @csrf
-            <input type="hidden" name="_method" value="POST" id="form-method"> <!-- Will be PATCH for edit -->
+            <input type="hidden" name="_method" value="POST" id="form-method">
+            <input type="hidden" name="mode" id="mode" value="">
             <div class="modal-body">
                 <input type="hidden" id="student-id" name="id">
                 
@@ -26,12 +27,16 @@
                     <label for="first-name">First Name</label>
                     <input type="text" id="first-name" name="first-name">
                 </div>
-                <div class="error-message" id="first-name-error" style="color:red; font-size:0.9em;"></div>
-
+                @error('first-name')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
                 <div>
                     <label for="last-name">Last Name</label>
                     <input type="text" id="last-name" name="last-name">
                 </div>
+                @error('last-name')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
                 <div class="error-message" id="last-name-error" style="color:red; font-size:0.9em;"></div>
                 <div>
                     <label for="gender">Gender</label>
