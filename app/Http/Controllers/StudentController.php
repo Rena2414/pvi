@@ -108,7 +108,6 @@ class StudentController extends Controller
             ->withErrors(['register' => 'A student with the same name, last name, and group already exists.'])
             ->withInput();
     }
-
        if ($mode === 'register') {
         Session::put('login_name', $student->login);
         Session::put('student_id', $student->id);
