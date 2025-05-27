@@ -52,7 +52,13 @@ Route::get('/tasks', function () {
 
 Route::get('/profile', function () {
     $loginName = Session::get('login_name');
-    return view('students.profile', compact('loginName'));
-});
+    $studentId = Session::get('student_id');
 
+    $student = null;
+    if ($studentId) {
+        $student = Student::find($studentId);
+    }
+
+    return view('students.profile', compact('loginName', 'student'));
+});
 
