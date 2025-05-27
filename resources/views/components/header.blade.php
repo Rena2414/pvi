@@ -48,6 +48,13 @@
                  <x-modals.log-in> </x-modals.log-in>
                  <x-modals.register-modal> </x-modals.register-modal>
             </div>
+
+              @if (request()->path() !== '/')
+                <script>
+                    window.location.href = "/";
+                </script>
+            @endif
+
             @endif
         </div>
     </div>

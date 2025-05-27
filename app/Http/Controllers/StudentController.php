@@ -24,7 +24,6 @@ class StudentController extends Controller
 {
    $mode = $request->input('mode', 'register');
 
-    // Validate inputs
      $validated = $request->validate([
     'username' => [
         'required',
@@ -62,7 +61,6 @@ class StudentController extends Controller
     'last-name.regex' => 'Last name must start with a capital letter and contain only letters, apostrophes, or hyphens.',
     ]);
 
-    // Map group string to integer (e.g., "PZ-21" → 1)
     $groupMap = [
         'PZ-21' => 1,
         'PZ-22' => 2,
@@ -73,7 +71,6 @@ class StudentController extends Controller
         'PZ-27' => 7,
     ];
 
-    // Map gender to integer
     $genderMap = [
         'M' => 0,
         'F' => 1,
@@ -112,7 +109,6 @@ class StudentController extends Controller
             ->withInput();
     }
 
-    // Create and save student
        if ($mode === 'register') {
         Session::put('login_name', $student->login);
         Session::put('student_id', $student->id);
@@ -156,7 +152,6 @@ public function update(Request $request, $id)
     ];
     $genderMap = ['M' => 0, 'F' => 1];
 
-    // Check for existing student with same name/group but different ID
     $existingStudent = Student::where('name', $validated['first-name'])
         ->where('lastname', $validated['last-name'])
         ->where('group', $groupMap[$validated['group']] ?? null)
