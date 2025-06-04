@@ -18,6 +18,11 @@ class AuthController extends Controller
         if ($student && Hash::check($credentials['password'], $student->password)) {
             Session::put('student_id', $student->id);
             Session::put('login_name', $student->login);
+
+            Session::put('student_name', $student->name);
+            Session::put('student_lastname', $student->lastname);
+
+
             $student->status = 1;
             $student->save();
             return redirect('/students');

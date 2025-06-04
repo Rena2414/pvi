@@ -48,12 +48,13 @@
 
     {{-- 1. Pass PHP session data to JavaScript (MUST stay here in Blade) --}}
     <script>
-        window.Laravel = {
-            csrfToken: "{{ csrf_token() }}",
-            loginName: "{{ Session::get('login_name') }}",
-            studentId: "{{ Session::get('student_id') }}",
-            firstName: "{{ Session::get('student_first_name') }}",
-            lastName: "{{ Session::get('student_last_name') }}"
+        // Pass Laravel variables to JavaScript
+        window.chatConfig = {
+            csrfToken: "{{ $csrfToken }}",
+            loginName: "{{ $loginName ?? '' }}", // Use ?? '' to handle potential nulls
+            studentId: "{{ $studentId ?? '' }}",
+            studentName: "{{ $studentName ?? '' }}",
+            studentLastname: "{{ $studentLastname ?? '' }}"
         };
     </script>
 

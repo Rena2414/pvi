@@ -179,7 +179,7 @@ async function startApplication() {
                         $set: {
                             socketId: socket.id,
                             loginName: currentUserLoginName,
-                            name: userData.name,
+                            name: userData.name,       // <-- THIS IS THE PROBLEM LINE
                             lastname: userData.lastname,
                             status: 'online', // Set to online when they connect
                             lastActive: new Date()

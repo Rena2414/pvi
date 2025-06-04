@@ -41,7 +41,14 @@ Route::get('/dashboard', function () {
 
 Route::get('/messages', function () {
     $loginName = Session::get('login_name');
-    return view('students.messages', compact('loginName'));
+    $csrfToken = csrf_token();
+    $loginName = Session::get('login_name');
+    $studentId = Session::get('student_id');
+    $studentName = Session::get('student_name');
+    $studentLastname = Session::get('student_lastname');
+    
+
+    return view('students.messages', compact('loginName', 'csrfToken', 'studentId', 'studentName', 'studentLastname'));
 });
 
 

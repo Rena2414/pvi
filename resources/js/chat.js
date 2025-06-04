@@ -11,10 +11,10 @@ let selectedParticipants = new Set(); // For creating new chats
 // Get current user info from Laravel Blade via window.Laravel
 // This data is passed from your Blade file and is available globally
 const currentUser = {
-    mysqlUserId: window.Laravel.studentId,
-    loginName: window.Laravel.loginName,
-    firstName: window.Laravel.firstName,
-    lastName: window.Laravel.lastName
+        mysqlUserId: window.chatConfig.studentId,
+        loginName: window.chatConfig.loginName,
+        name: window.chatConfig.studentName,       // <--- CHANGED
+        lastname: window.chatConfig.studentLastname // <--- CHANGED
 };
 
 // --- DOM Elements ---
@@ -39,8 +39,8 @@ socket.on('connect', () => {
     socket.emit('userConnected', {
         mysqlUserId: currentUser.mysqlUserId,
         loginName: currentUser.loginName,
-        name: currentUser.firstName,
-        lastname: currentUser.lastName
+        name: currentUser.name,       // <--- CHANGED
+        lastname: currentUser.lastname // <--- CHANGED
     });
 });
 
@@ -144,19 +144,22 @@ function displayMessage(message) {
     const messageElement = document.createElement('div');
     messageElement.classList.add('message-item');
     let senderDisplayName = message.senderId === currentUser.mysqlUserId ? 'You' : message.senderId;
+
     if (message.senderId !== currentUser.mysqlUserId) {
         const senderUser = availableStudents.find(s => s.mysqlUserId === message.senderId);
         if (senderUser) {
             senderDisplayName = `${senderUser.name} ${senderUser.lastname}`;
         }
     } else {
-        senderDisplayName = `${currentUser.firstName} ${currentUser.lastName} (You)`;
+        // --- THIS IS THE CRITICAL CHANGE ---
+        senderDisplayName = `${currentUser.name} ${currentUser.lastname} (You)`; // Use currentUser.name and currentUser.lastname
     }
 
     const timestamp = new Date(message.timestamp).toLocaleTimeString();
     messageElement.innerHTML = `<strong>${senderDisplayName}:</strong> ${message.message} <span class="timestamp">${timestamp}</span>`;
     messagesHistory.appendChild(messageElement);
 }
+
 
 function joinChat(chatId, chatName) {
     if (currentChatId) {
