@@ -2,11 +2,12 @@
 
 require('dotenv').config();
 
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb'); // Import ObjectId
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const cors = require('cors'); // For handling CORS with Express/Socket.io
+const cors = require('cors');
+const mysql = require('mysql2/promise'); // <--- IMPORT mysql2 for async/await
 
 const uri = process.env.MONGODB_URI;
 
@@ -18,61 +19,133 @@ if (!uri) {
 }
 
 const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
 });
 
-let db; // Variable to hold the database object
-let usersCollection; // MongoDB collection for chat users
-let chatsCollection; // MongoDB collection for chats
-let messagesCollection; // MongoDB collection for messages
+let db;
+let usersCollection;
+let chatsCollection;
+let messagesCollection;
+
+// --- MySQL Connection Pool ---
+let mysqlPool;
+
+async function connectMySQL() {
+    console.log("Attempting to connect to MySQL...");
+    try {
+        mysqlPool = mysql.createPool({
+            host: process.env.MYSQL_HOST,
+            user: process.env.MYSQL_USER,
+            password: process.env.MYSQL_PASSWORD,
+            database: process.env.MYSQL_DATABASE,
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0
+        });
+        // Try to get a connection to verify
+        const connection = await mysqlPool.getConnection();
+        connection.release();
+        console.log("Successfully connected to MySQL database!");
+    } catch (error) {
+        console.error("MySQL connection FAILED!");
+        console.error("Error details:", error);
+        process.exit(1);
+    }
+}
+
+// --- Function to Sync Students from MySQL to MongoDB ---
+async function syncStudentsFromMySQLToMongo() {
+    console.log("Starting student synchronization from MySQL to MongoDB...");
+    if (!mysqlPool) {
+        console.error("MySQL pool not initialized. Cannot sync students.");
+        return;
+    }
+
+    try {
+        const [rows] = await mysqlPool.execute('SELECT id, login, name, lastname FROM students'); // Corrected: login instead of login_name
+        
+        if (rows.length === 0) {
+            console.log("No students found in MySQL 'students' table to sync.");
+            return;
+        }
+
+        const bulkOperations = rows.map(student => ({
+            updateOne: {
+                filter: { mysqlUserId: student.id.toString() }, // Ensure IDs are strings as used in MongoDB
+                update: {
+                    $set: {
+                        loginName: student.login,
+                        name: student.name,
+                        lastname: student.lastname,
+                        // Set status to 'offline' for initial sync or if not explicitly online
+                        status: 'offline', // Default to offline, will be updated to 'online' on Socket.io connect
+                        lastActive: new Date()
+                    },
+                    $setOnInsert: {
+                        createdAt: new Date()
+                    }
+                },
+                upsert: true // Create if not exists, update if exists
+            }
+        }));
+
+        const result = await usersCollection.bulkWrite(bulkOperations);
+        console.log(`Synchronization complete: Inserted ${result.upsertedCount} new students, Updated ${result.modifiedCount} existing students.`);
+
+    } catch (error) {
+        console.error("Error syncing students from MySQL to MongoDB:", error);
+    }
+}
+
 
 async function connectDB() {
-  console.log("Attempting to connect to MongoDB...");
-  try {
-    await client.connect();
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. Successfully connected to MongoDB!");
+    console.log("Attempting to connect to MongoDB...");
+    try {
+        await client.connect();
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. Successfully connected to MongoDB!");
 
-    db = client.db("pvi_chat_db"); // REPLACE 'pvi_chat_db' with your actual database name
-    console.log(`Connected to database: ${db.databaseName}`);
+        db = client.db("pvi_chat_db"); // REPLACE 'pvi_chat_db' with your actual database name
+        console.log(`Connected to database: ${db.databaseName}`);
 
-    // Assign collections
-    usersCollection = db.collection('users');
-    chatsCollection = db.collection('chats');
-    messagesCollection = db.collection('messages');
+        // Assign collections
+        usersCollection = db.collection('users');
+        chatsCollection = db.collection('chats');
+        messagesCollection = db.collection('messages');
 
-    return db;
+        return db;
 
-  } catch (error) {
-    console.error("MongoDB connection FAILED!");
-    console.error("Error details:", error);
-    process.exit(1);
-  }
+    } catch (error) {
+        console.error("MongoDB connection FAILED!");
+        console.error("Error details:", error);
+        process.exit(1);
+    }
 }
 
 async function startApplication() {
     try {
-        await connectDB(); // Ensure DB is connected first
+        await connectDB(); // Ensure MongoDB is connected first
+        await connectMySQL(); // Ensure MySQL is connected
+        await syncStudentsFromMySQLToMongo(); // <--- Run synchronization here
 
-        console.log("Database connection established. Starting application services...");
+        console.log("Database connections established. Starting application services...");
 
         const app = express();
         const server = http.createServer(app);
 
-        // Configure CORS for Socket.io and Express
-        const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'; // Your Vite dev server URL
+        const FRONTEND_URL = process.env.FRONTEND_URL; // Now correctly read from .env
 
         app.use(cors({
             origin: FRONTEND_URL,
             methods: ['GET', 'POST'],
-            credentials: true // Allow cookies/session if needed for Laravel auth
+            credentials: true
         }));
 
-        const io = new socketIo.Server(server, { // Use new socketIo.Server syntax
+        const io = new socketIo.Server(server, {
             cors: {
                 origin: FRONTEND_URL,
                 methods: ["GET", "POST"],
@@ -86,104 +159,84 @@ async function startApplication() {
         io.on('connection', async (socket) => {
             console.log('A user connected:', socket.id);
 
-            let currentUserId = null; // To store the MySQL student ID for this socket
-            let currentUserLoginName = null; // To store the login name
+            let currentUserId = null;
+            let currentUserLoginName = null;
 
-            // Event: 'userConnected' - Sent by client AFTER they know their login info
-            // This is crucial for linking a socket.id to a MySQL user ID
             socket.on('userConnected', async (userData) => {
-                // userData should contain { mysqlUserId: '...', loginName: '...', name: '...', lastname: '...' }
                 if (!userData || !userData.mysqlUserId || !userData.loginName) {
                     console.warn('Received userConnected without required data:', userData);
-                    socket.disconnect(true); // Disconnect invalid connections
+                    socket.disconnect(true);
                     return;
                 }
 
                 currentUserId = userData.mysqlUserId;
                 currentUserLoginName = userData.loginName;
 
-                // Update or create user in MongoDB chat_users collection
+                // Update user in MongoDB, setting status to 'online'
                 await usersCollection.updateOne(
                     { mysqlUserId: currentUserId },
                     {
                         $set: {
                             socketId: socket.id,
                             loginName: currentUserLoginName,
-                            name: userData.name, // Store full name for display
+                            name: userData.name,
                             lastname: userData.lastname,
-                            status: 'online',
+                            status: 'online', // Set to online when they connect
                             lastActive: new Date()
                         },
-                        $setOnInsert: { createdAt: new Date() } // Only set on first insert
+                        // $setOnInsert: { createdAt: new Date() } // Removed, as syncStudentsFromMySQLToMongo handles initial creation
                     },
-                    { upsert: true } // Create if not exists, update if exists
+                    { upsert: true } // Upsert is fine here to catch any not-yet-synced users, but primarily for status update
                 );
                 console.log(`User ${currentUserLoginName} (ID: ${currentUserId}) connected with socket ${socket.id}`);
 
-                // Join a room specific to this user for private notifications/chats
                 socket.join(`user-${currentUserId}`);
-
-                // Inform all connected clients about user's online status
                 io.emit('userStatusUpdate', { mysqlUserId: currentUserId, status: 'online' });
 
-                // Fetch and send list of available chats to the connected user
                 const userChats = await chatsCollection.find({ participants: currentUserId }).toArray();
-                socket.emit('chatsList', userChats); // Send list of chats this user is in
+                socket.emit('chatsList', userChats);
 
-                // You might also want to fetch all students (users) for the "create new chat" functionality
+                // Fetch all students (including offline ones) for the 'create new chat' modal
                 const allStudents = await usersCollection.find({}, { projection: { mysqlUserId: 1, loginName: 1, name: 1, lastname: 1, status: 1 } }).toArray();
                 socket.emit('allStudents', allStudents);
             });
 
-
-            // Event: 'createChat' - User wants to start a new chat
+            // ... (rest of your Socket.io event handlers: createChat, joinChat, sendMessage) ...
             socket.on('createChat', async (data) => {
-                // data should contain { participants: ['mysqlUserId1', 'mysqlUserId2', ...], type: 'group' | 'private', name: 'Optional Group Name' }
-                // Make sure currentUserId is always included as a participant
+                // ... (your existing createChat logic) ...
                 if (!currentUserId || !data.participants || !Array.isArray(data.participants) || data.participants.length < 1) {
                     socket.emit('chatError', 'Invalid chat creation request.');
                     return;
                 }
-
-                // Ensure the current user is always a participant
                 const uniqueParticipants = [...new Set([...data.participants, currentUserId])];
-
-                // For private chats, ensure only two participants
                 if (data.type === 'private' && uniqueParticipants.length !== 2) {
-                     socket.emit('chatError', 'Private chat must have exactly two participants.');
-                     return;
+                    socket.emit('chatError', 'Private chat must have exactly two participants.');
+                    return;
                 }
-                 if (data.type === 'group' && uniqueParticipants.length < 2) {
-                     socket.emit('chatError', 'Group chat must have at least two participants.');
-                     return;
+                if (data.type === 'group' && uniqueParticipants.length < 2) {
+                    socket.emit('chatError', 'Group chat must have at least two participants.');
+                    return;
                 }
-
-
                 let chatName = data.name;
                 if (data.type === 'private') {
-                    // Generate a name for private chat based on participants
                     const otherParticipantId = uniqueParticipants.find(p => p !== currentUserId);
                     const otherUser = await usersCollection.findOne({ mysqlUserId: otherParticipantId });
-                    const currentUser = await usersCollection.findOne({ mysqlUserId: currentUserId });
-                    if(otherUser && currentUser) {
-                       chatName = `${currentUser.loginName} & ${otherUser.loginName}`;
+                    const currentUserDoc = await usersCollection.findOne({ mysqlUserId: currentUserId });
+                    if(otherUser && currentUserDoc) {
+                        chatName = `${currentUserDoc.loginName} & ${otherUser.loginName}`;
                     } else {
-                       chatName = `Private Chat (${uniqueParticipants.join(', ')})`;
+                        chatName = `Private Chat (${uniqueParticipants.join(', ')})`;
                     }
                 }
-
-                // Check if chat already exists (especially for private chats)
                 const existingChat = await chatsCollection.findOne({
                     type: data.type,
                     participants: { $size: uniqueParticipants.length, $all: uniqueParticipants }
                 });
-
                 if (existingChat) {
                     socket.emit('chatError', 'Chat already exists.');
-                    socket.emit('chatCreated', existingChat); // Send back existing chat
+                    socket.emit('chatCreated', existingChat);
                     return;
                 }
-
                 const newChat = {
                     type: data.type,
                     participants: uniqueParticipants,
@@ -191,146 +244,101 @@ async function startApplication() {
                     createdAt: new Date(),
                     updatedAt: new Date()
                 };
-
                 const result = await chatsCollection.insertOne(newChat);
                 newChat._id = result.insertedId;
-
-                // Inform all participants of the new chat
                 uniqueParticipants.forEach(participantId => {
-                    io.to(`user-${participantId}`).emit('chatCreated', newChat); // Send to all participants
+                    io.to(`user-${participantId}`).emit('chatCreated', newChat);
                 });
-
                 console.log(`Chat created: ${newChat._id} with participants: ${uniqueParticipants.join(', ')}`);
             });
 
 
-            // Event: 'joinChat' - User wants to open a specific chat and get history
             socket.on('joinChat', async (chatId) => {
                 if (!chatId) {
                     socket.emit('chatError', 'Invalid chat ID to join.');
                     return;
                 }
-
                 const chatObjectId = new ObjectId(chatId);
                 const chat = await chatsCollection.findOne({ _id: chatObjectId, participants: currentUserId });
-
                 if (!chat) {
                     socket.emit('chatError', 'Chat not found or user not a participant.');
                     return;
                 }
-
-                socket.join(chatId); // Join the Socket.io room for this chat
+                socket.join(chatId);
                 console.log(`User ${currentUserLoginName} joined chat room: ${chatId}`);
-
-                // Fetch chat history
                 const history = await messagesCollection.find({ chatId: chatObjectId })
-                                                     .sort({ timestamp: 1 })
-                                                     .limit(100) // Limit history to 100 messages
-                                                     .toArray();
+                                    .sort({ timestamp: 1 })
+                                    .limit(100)
+                                    .toArray();
                 socket.emit('chatHistory', { chatId: chatId, messages: history });
             });
 
 
-            // Event: 'sendMessage' - User sends a message
             socket.on('sendMessage', async (data) => {
-                // data should contain { chatId: '...', message: '...' }
                 if (!currentUserId || !data.chatId || !data.message) {
                     socket.emit('chatError', 'Invalid message data.');
                     return;
                 }
-
                 const chatObjectId = new ObjectId(data.chatId);
                 const chat = await chatsCollection.findOne({ _id: chatObjectId, participants: currentUserId });
-
                 if (!chat) {
                     socket.emit('chatError', 'You are not a participant of this chat.');
                     return;
                 }
-
                 const newMessage = {
                     chatId: chatObjectId,
                     senderId: currentUserId,
                     message: data.message,
                     timestamp: new Date(),
-                    readBy: [currentUserId] // Sender has read it by default
+                    readBy: [currentUserId]
                 };
-
                 const result = await messagesCollection.insertOne(newMessage);
-                newMessage._id = result.insertedId; // Add generated _id to the message
-
-                // Update chat's last message time
+                newMessage._id = result.insertedId;
                 await chatsCollection.updateOne(
                     { _id: chatObjectId },
                     { $set: { updatedAt: new Date(), lastMessageSnippet: data.message.substring(0, 50) } }
                 );
-
-                // Emit the message to all participants in that chat room
-                io.to(data.chatId).emit('newMessage', newMessage); // Broadcast new message
-
-                // Also notify other participants if they are not in this chat room
-                chat.participants.forEach(participantId => {
-                    if (participantId !== currentUserId) { // Don't notify sender
-                        // Check if the other participant is currently connected to the server
-                        // This is a simplified check, full solution might need more sophisticated tracking
-                        const participantSocketId = usersCollection.findOne({ mysqlUserId: participantId, status: 'online' }).then(user => user ? user.socketId : null);
-                        
-                        if (participantSocketId && io.sockets.adapter.rooms.get(data.chatId)?.has(participantSocketId)) {
-                            // User is online AND in the same chat room, no need for bell animation (as per requirement)
-                            // Do nothing or send a silent update
-                        } else if (participantSocketId) {
-                            // User is online but in a different chat or not on messages page, trigger bell/notification
-                            io.to(`user-${participantId}`).emit('newNotification', {
-                                chatId: data.chatId,
-                                sender: currentUserLoginName, // Or full name
-                                snippet: data.message.substring(0, 50) + '...',
-                                type: 'message'
-                            });
+                io.to(data.chatId).emit('newMessage', newMessage);
+                chat.participants.forEach(async participantId => { // Changed to async to allow await inside
+                    if (participantId !== currentUserId) {
+                        const participantUser = await usersCollection.findOne({ mysqlUserId: participantId }); // Fetch participant user
+                        if (participantUser && participantUser.socketId && io.sockets.sockets.has(participantUser.socketId)) {
+                             if (io.sockets.adapter.rooms.get(data.chatId)?.has(participantUser.socketId)) {
+                                 // User is online AND in the same chat room, no need for bell animation
+                             } else {
+                                 // User is online but in a different chat or not on messages page, trigger bell/notification
+                                 io.to(`user-${participantId}`).emit('newNotification', {
+                                     chatId: data.chatId,
+                                     sender: currentUserLoginName,
+                                     snippet: data.message.substring(0, 50) + '...',
+                                     type: 'message'
+                                 });
+                             }
                         }
                     }
                 });
-
                 console.log(`Message sent in chat ${data.chatId} by ${currentUserLoginName}: ${data.message}`);
             });
 
 
-            // Event: 'disconnect'
             socket.on('disconnect', async () => {
                 if (currentUserId) {
                     console.log(`User ${currentUserLoginName} (ID: ${currentUserId}) disconnected from socket ${socket.id}`);
-                    // Update user status to offline in MongoDB
                     await usersCollection.updateOne(
                         { mysqlUserId: currentUserId },
                         { $set: { status: 'offline', socketId: null, lastActive: new Date() } }
                     );
-                    // Inform all connected clients about user's offline status
                     io.emit('userStatusUpdate', { mysqlUserId: currentUserId, status: 'offline' });
                 } else {
                     console.log('An unauthenticated user disconnected:', socket.id);
                 }
             });
 
-            // Handle errors
             socket.on('error', (err) => {
                 console.error('Socket error:', err);
             });
         });
 
-        // =======================================================
-        // Express Routes (Optional, e.g., for API if needed)
-        // =======================================================
-        app.get('/api/users/online', async (req, res) => {
-            try {
-                const onlineUsers = await usersCollection.find({ status: 'online' }, { projection: { mysqlUserId: 1, loginName: 1, name: 1, lastname: 1 } }).toArray();
-                res.json(onlineUsers);
-            } catch (error) {
-                console.error('Error fetching online users:', error);
-                res.status(500).json({ error: 'Internal server error' });
-            }
-        });
-        // You might add more API routes here if your Laravel frontend needs to fetch
-        // initial data or perform non-realtime operations from Node.js (e.g., getting a list of all students)
-
-        // Start your HTTP server
         const PORT = process.env.PORT || 3000;
         server.listen(PORT, () => {
             console.log(`Node.js Chat Server listening on port ${PORT}`);
@@ -342,5 +350,4 @@ async function startApplication() {
     }
 }
 
-// Start the entire application
 startApplication();

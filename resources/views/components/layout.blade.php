@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     @vite('resources/css/app.css', 'resources/js/app.js')
+     {{-- 1. Load the Socket.io client library FIRST --}}
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-jUL7QIR3vbyuW+hI45pI63zV9R4z/T+fQ0n9O3+gXJm+1Q8J4D3k6+n5K/A72F6+gE5" crossorigin="anonymous"></script>
 </head>
 
 <body>
