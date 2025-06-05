@@ -37,6 +37,7 @@ socket.on('connect', () => {
         name: currentUser.name,       
         lastname: currentUser.lastname
     });
+    socket.emit('getUnreadMessages', currentUser.mysqlUserId);
 });
 
 socket.on('disconnect', () => {
@@ -194,6 +195,12 @@ function joinChat(chatId, chatName) {
     currentChatName.textContent = chatName;
 
     socket.emit('joinChat', chatId);
+
+    socket.emit('markMessagesAsRead', {
+        chatId: chatId,
+        userId: currentUser.mysqlUserId
+    });
+
 
     const newChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
     if (newChatItem) newChatItem.classList.add('active-chat');
