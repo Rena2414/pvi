@@ -46,6 +46,24 @@ socket.on('newMessage', (message) => {
         }, 750);
 });
 
+socket.on('newNotification', (notification) => {
+    console.log('Notification received:', notification);
+
+    const plane = document.querySelector('.plane-icon');
+    plane.classList.add('animate');
+    document.getElementById('notification-circle').style.opacity = 1;
+    document.querySelector('.notifications').classList.add('no-hover');
+
+    setTimeout(() => {
+        plane.classList.remove('animate');
+    }, 500);
+
+    setTimeout(() => {
+        document.querySelector('.notifications').classList.remove('no-hover');
+    }, 750);
+});
+
+
 socket.on('userStatusUpdate', (data) => {
     console.log('User status update:', data);
     const userElement = document.querySelector(`.user-list-item[data-user-id="${data.mysqlUserId}"]`);
