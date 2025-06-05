@@ -122,6 +122,8 @@ socket.on('newMessage', (message) => {
             document.querySelector('.notifications').classList.remove('no-hover');
         }, 750);
     }
+
+    
 });
 
 
@@ -140,8 +142,6 @@ socket.on('allStudents', (students) => {
     availableStudents = students.filter(s => s.mysqlUserId !== currentUser.mysqlUserId);
     renderAvailableStudents();
 });
-
-
 
 
 function displayMessage(message) {

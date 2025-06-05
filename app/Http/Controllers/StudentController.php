@@ -16,7 +16,11 @@ class StudentController extends Controller
     {
         $students = Student::orderBy("created_at","desc")->paginate(4);
         $loginName = Session::get('login_name');
-        return view('students.index', compact('students', 'loginName'));
+        $csrfToken = csrf_token();
+        $studentId = session('student_id');
+        $studentName = session('student_name');
+        $studentLastname = session('student_lastname');
+        return view('students.index', compact('students', 'loginName', 'csrfToken', 'studentId', 'studentName', 'studentLastname'));
     }
 
 

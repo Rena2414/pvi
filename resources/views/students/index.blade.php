@@ -25,6 +25,18 @@
     <x-modals.add-student />
     <x-modals.delete-confirmation />
 
+<script>
+        window.chatConfig = {
+            csrfToken: "{{ $csrfToken }}",
+            loginName: "{{ $loginName ?? '' }}", 
+            studentId: "{{ $studentId ?? '' }}",
+            studentName: "{{ $studentName ?? '' }}",
+            studentLastname: "{{ $studentLastname ?? '' }}"
+        };
+    </script>
+
+    @vite(['resources/css/app.css', 'resources/js/index.js'])
+
 
   <script>
 

@@ -7,7 +7,11 @@ use App\Models\Student;
 
 Route::get('/', function () {
     $loginName = Session::get('login_name');
-    return view('welcome', compact('loginName'));
+    $csrfToken = csrf_token();
+    $studentId = Session::get('student_id');
+    $studentName = Session::get('student_name');
+    $studentLastname = Session::get('student_lastname');
+    return view('welcome', compact('loginName', 'csrfToken', 'studentId', 'studentName', 'studentLastname'));
 });
 Route::get('/students', [StudentController::class, 'index'])->name('students.index');
 
@@ -36,13 +40,16 @@ Route::post('/logout', function () {
 
 Route::get('/dashboard', function () {
     $loginName = Session::get('login_name');
-    return view('students.dashboard', compact('loginName'));
+    $csrfToken = csrf_token();
+    $studentId = Session::get('student_id');
+    $studentName = Session::get('student_name');
+    $studentLastname = Session::get('student_lastname');
+    return view('students.dashboard', compact('loginName', 'csrfToken', 'studentId', 'studentName', 'studentLastname'));
 });
 
 Route::get('/messages', function () {
     $loginName = Session::get('login_name');
     $csrfToken = csrf_token();
-    $loginName = Session::get('login_name');
     $studentId = Session::get('student_id');
     $studentName = Session::get('student_name');
     $studentLastname = Session::get('student_lastname');
@@ -54,18 +61,24 @@ Route::get('/messages', function () {
 
 Route::get('/tasks', function () {
     $loginName = Session::get('login_name');
-    return view('students.tasks', compact('loginName'));
+    $csrfToken = csrf_token();
+    $studentId = Session::get('student_id');
+    $studentName = Session::get('student_name');
+    $studentLastname = Session::get('student_lastname');
+    return view('students.tasks', compact('loginName', 'csrfToken', 'studentId', 'studentName', 'studentLastname'));
 });
 
 Route::get('/profile', function () {
     $loginName = Session::get('login_name');
     $studentId = Session::get('student_id');
-
+    $csrfToken = csrf_token();
+    $studentName = Session::get('student_name');
+    $studentLastname = Session::get('student_lastname');
     $student = null;
     if ($studentId) {
         $student = Student::find($studentId);
     }
 
-    return view('students.profile', compact('loginName', 'student'));
+    return view('students.profile', compact('loginName', 'student', 'csrfToken', 'studentId', 'studentName', 'studentLastname'));
 });
 
