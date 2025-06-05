@@ -1,3 +1,5 @@
+// client-side: chat.js
+
 import { io } from 'socket.io-client'; 
 
 const SOCKET_SERVER_URL = 'http://localhost:3000'; 
@@ -11,7 +13,7 @@ let selectedParticipants = new Set();
 const currentUser = {
         mysqlUserId: window.chatConfig.studentId,
         loginName: window.chatConfig.loginName,
-        name: window.chatConfig.studentName,       
+        name: window.chatConfig.studentName, 
         lastname: window.chatConfig.studentLastname 
 };
 
@@ -34,10 +36,10 @@ socket.on('connect', () => {
     socket.emit('userConnected', {
         mysqlUserId: currentUser.mysqlUserId,
         loginName: currentUser.loginName,
-        name: currentUser.name,       
+        name: currentUser.name,
         lastname: currentUser.lastname
     });
-    socket.emit('getUnreadMessages', currentUser.mysqlUserId);
+    socket.emit('getUnreadMessages', currentUser.mysqlUserId); // This is likely for the notifications on this page, if any
 });
 
 socket.on('disconnect', () => {
@@ -58,248 +60,272 @@ socket.on('chatsList', (chats) => {
         chatItem.dataset.chatId = chat._id;
         let displayName = chat.name;
         if (chat.type === 'private' && chat.participants.length === 2) {
-            const otherParticipantId = chat.participants.find(p => p !== currentUser.mysqlUserId);
-            const otherUser = availableStudents.find(s => s.mysqlUserId === otherParticipantId);
+             const otherParticipantId = chat.participants.find(p => p !== currentUser.mysqlUserId);
+             const otherUser = availableStudents.find(s => s.mysqlUserId === otherParticipantId);
             if (otherUser) {
                 displayName = `${otherUser.name} ${otherUser.lastname}`;
             } else {
                 displayName = `Private Chat with ID: ${otherParticipantId}`;
-            }
-        }
-        chatItem.textContent = displayName;
-        chatItem.addEventListener('click', () => joinChat(chat._id, displayName));
-        chatsList.appendChild(chatItem);
+             }
+         }
+         chatItem.textContent = displayName;
+         chatItem.addEventListener('click', () => joinChat(chat._id, displayName));
+         chatsList.appendChild(chatItem);
     });
+
+    // --- NEW CHANGE: Auto-join chat from URL after chats list is loaded ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatIdFromUrl = urlParams.get('chatId');
+
+    if (chatIdFromUrl && !currentChatId) { // Only attempt to auto-join if not already in a chat
+        const chatToOpen = chats.find(chat => chat._id === chatIdFromUrl);
+        if (chatToOpen) {
+            console.log(`[chat.js] Auto-joining chat from URL: ${chatIdFromUrl}`);
+            joinChat(chatToOpen._id, chatToOpen.name); // Use the existing joinChat function
+        } else {
+            console.warn(`[chat.js] Chat ID ${chatIdFromUrl} from URL not found in received chats list.`);
+        }
+    }
+    // --- END NEW CHANGE ---
 });
 
 socket.on('chatCreated', (newChat) => {
-    console.log('New chat created:', newChat);
+     console.log('New chat created:', newChat);
     const chatItem = document.createElement('div');
-    chatItem.classList.add('chat-item');
-    chatItem.dataset.chatId = newChat._id;
-    let displayName = newChat.name;
-    if (newChat.type === 'private' && newChat.participants.length === 2) {
-        const otherParticipantId = newChat.participants.find(p => p !== currentUser.mysqlUserId);
-        const otherUser = availableStudents.find(s => s.mysqlUserId === otherParticipantId);
-        if (otherUser) {
-            displayName = `${otherUser.name} ${otherUser.lastname}`;
-        } else {
-            displayName = `Private Chat with ID: ${otherParticipantId}`;
-        }
-    }
-    chatItem.textContent = displayName;
-    chatItem.addEventListener('click', () => joinChat(newChat._id, displayName));
-    chatsList.prepend(chatItem); 
-    closeCreateChatModal();
-    joinChat(newChat._id, displayName); 
+    chatItem.classList.add('chat-item');
+    chatItem.dataset.chatId = newChat._id;
+    let displayName = newChat.name;
+    if (newChat.type === 'private' && newChat.participants.length === 2) {
+        const otherParticipantId = newChat.participants.find(p => p !== currentUser.mysqlUserId);
+        const otherUser = availableStudents.find(s => s.mysqlUserId === otherParticipantId);
+        if (otherUser) {
+            displayName = `${otherUser.name} ${otherUser.lastname}`;
+        } else {
+            displayName = `Private Chat with ID: ${otherParticipantId}`;
+        }
+    }
+    chatItem.textContent = displayName;
+    chatItem.addEventListener('click', () => joinChat(newChat._id, displayName));
+    chatsList.prepend(chatItem); 
+    closeCreateChatModal();
+    joinChat(newChat._id, displayName); 
 });
 
 
 socket.on('chatHistory', (data) => {
-    if (data.chatId === currentChatId) {
-        messagesHistory.innerHTML = ''; 
-        data.messages.forEach(msg => displayMessage(msg));
-        messagesHistory.scrollTop = messagesHistory.scrollHeight; 
-    }
+    if (data.chatId === currentChatId) {
+        messagesHistory.innerHTML = ''; 
+        data.messages.forEach(msg => displayMessage(msg));
+        messagesHistory.scrollTop = messagesHistory.scrollHeight; 
+    }
 });
 
 
 socket.on('newMessage', (message) => {
-    if (message.chatId === currentChatId) {
-        displayMessage(message);
-        messagesHistory.scrollTop = messagesHistory.scrollHeight; 
-    } else {
-        console.log('New message in another chat:', message);
-        const plane = document.querySelector('.plane-icon');
-        plane.classList.add('animate');
-        document.getElementById('notification-circle').style.opacity = 1;
-        document.querySelector('.notifications').classList.add('no-hover');
+    if (message.chatId === currentChatId) {
+        displayMessage(message);
+        messagesHistory.scrollTop = messagesHistory.scrollHeight; 
+    } else {
+        console.log('New message in another chat:', message);
+        // If you have notification elements on the chat page, animate them here.
+        // For now, these were likely specific to the `message.js` page.
+        // You might consider centralizing notification logic or ensuring notification elements exist on this page.
+        const plane = document.querySelector('.plane-icon'); // Check if these elements exist on your messages page
+        if (plane) plane.classList.add('animate');
+        const notificationCircle = document.getElementById('notification-circle');
+        if (notificationCircle) notificationCircle.style.opacity = 1;
+        const notificationsContainer = document.querySelector('.notifications');
+        if (notificationsContainer) notificationsContainer.classList.add('no-hover');
 
-        setTimeout(() => {
-            plane.classList.remove('animate');
-        }, 500);
+        setTimeout(() => {
+            if (plane) plane.classList.remove('animate');
+        }, 500);
 
-        setTimeout(() => {
-            document.querySelector('.notifications').classList.remove('no-hover');
-        }, 750);
-    }
+        setTimeout(() => {
+            if (notificationsContainer) notificationsContainer.classList.remove('no-hover');
+        }, 750);
+    }
 
-    
+    
 });
 
 socket.on('newNotification', (notification) => {
-    if (notification.chatId !== currentChatId) {
-        console.log('Notification received:', notification);
+    // This event is primarily for animating UI elements on other pages,
+    // like the bell icon on the student dashboard.
+    // On the messages page, `newMessage` and `getUnreadMessages` handle direct updates.
+    if (notification.chatId !== currentChatId) {
+        console.log('Notification received:', notification);
 
-        const plane = document.querySelector('.plane-icon');
-        plane.classList.add('animate');
-        document.getElementById('notification-circle').style.opacity = 1;
-        document.querySelector('.notifications').classList.add('no-hover');
+        const plane = document.querySelector('.plane-icon'); // Check if these exist on your messages page
+        if (plane) plane.classList.add('animate');
+        const notificationCircle = document.getElementById('notification-circle');
+        if (notificationCircle) notificationCircle.style.opacity = 1;
+        const notificationsContainer = document.querySelector('.notifications');
+        if (notificationsContainer) notificationsContainer.classList.add('no-hover');
 
-        setTimeout(() => {
-            plane.classList.remove('animate');
-        }, 500);
+        setTimeout(() => {
+            if (plane) plane.classList.remove('animate');
+        }, 500);
 
-        setTimeout(() => {
-            document.querySelector('.notifications').classList.remove('no-hover');
-        }, 750);
-    }
+        setTimeout(() => {
+            if (notificationsContainer) notificationsContainer.classList.remove('no-hover');
+        }, 750);
+    }
 });
 
 
 
 socket.on('userStatusUpdate', (data) => {
-    console.log('User status update:', data);
-    const userElement = document.querySelector(`.user-list-item[data-user-id="${data.mysqlUserId}"]`);
-    if (userElement) {
-        userElement.classList.remove('online', 'offline');
-        userElement.classList.add(data.status);
-    }
-    renderAvailableStudents(); 
+    console.log('User status update:', data);
+    const userElement = document.querySelector(`.user-list-item[data-user-id="${data.mysqlUserId}"]`);
+    if (userElement) {
+        userElement.classList.remove('online', 'offline');
+        userElement.classList.add(data.status);
+    }
+    renderAvailableStudents(); 
 });
 
 
 socket.on('allStudents', (students) => {
-    availableStudents = students.filter(s => s.mysqlUserId !== currentUser.mysqlUserId);
-    renderAvailableStudents();
+    availableStudents = students.filter(s => s.mysqlUserId !== currentUser.mysqlUserId);
+    renderAvailableStudents();
 });
 
 
 function displayMessage(message) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message-item');
-    let senderDisplayName = message.senderId === currentUser.mysqlUserId ? 'You' : message.senderId;
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message-item');
+    let senderDisplayName = message.senderId === currentUser.mysqlUserId ? 'You' : message.senderId;
 
-    if (message.senderId !== currentUser.mysqlUserId) {
-        const senderUser = availableStudents.find(s => s.mysqlUserId === message.senderId);
-        if (senderUser) {
-            senderDisplayName = `${senderUser.name} ${senderUser.lastname}`;
-        }
-    } else {
-        senderDisplayName = `${currentUser.name} ${currentUser.lastname} (You)`; 
-    }
+    if (message.senderId !== currentUser.mysqlUserId) {
+        const senderUser = availableStudents.find(s => s.mysqlUserId === message.senderId);
+        if (senderUser) {
+            senderDisplayName = `${senderUser.name} ${senderUser.lastname}`;
+        }
+    } else {
+        senderDisplayName = `${currentUser.name} ${currentUser.lastname} (You)`; 
+    }
 
-    const timestamp = new Date(message.timestamp).toLocaleTimeString();
-    messageElement.innerHTML = `<strong>${senderDisplayName}:</strong> ${message.message} <span class="timestamp">${timestamp}</span>`;
-    messagesHistory.appendChild(messageElement);
+    const timestamp = new Date(message.timestamp).toLocaleTimeString();
+    messageElement.innerHTML = `<strong>${senderDisplayName}:</strong> ${message.message} <span class="timestamp">${timestamp}</span>`;
+    messagesHistory.appendChild(messageElement);
 }
 
 
 function joinChat(chatId, chatName) {
-    if (currentChatId) {
-        const prevChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
-        if (prevChatItem) prevChatItem.classList.remove('active-chat');
-    }
+    if (currentChatId) {
+        const prevChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
+        if (prevChatItem) prevChatItem.classList.remove('active-chat');
+    }
 
-    currentChatId = chatId;
-    currentChatName.textContent = chatName;
+    currentChatId = chatId;
+    currentChatName.textContent = chatName;
 
-    socket.emit('joinChat', chatId);
+    socket.emit('joinChat', chatId);
 
-    socket.emit('markMessagesAsRead', {
-        chatId: chatId,
-        userId: currentUser.mysqlUserId
-    });
+    socket.emit('markMessagesAsRead', {
+        chatId: chatId,
+        userId: currentUser.mysqlUserId
+    });
 
 
-    const newChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
-    if (newChatItem) newChatItem.classList.add('active-chat');
+    const newChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
+    if (newChatItem) newChatItem.classList.add('active-chat');
 }
 
 
 
 
 sendMessageBtn.addEventListener('click', () => {
-    const message = messageInput.value.trim();
-    if (message && currentChatId) {
-        socket.emit('sendMessage', { chatId: currentChatId, message: message });
-        messageInput.value = '';
-    }
+    const message = messageInput.value.trim();
+    if (message && currentChatId) {
+        socket.emit('sendMessage', { chatId: currentChatId, message: message });
+        messageInput.value = '';
+    }
 });
 
 messageInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        sendMessageBtn.click();
-    }
+    if (e.key === 'Enter') {
+        sendMessageBtn.click();
+    }
 });
 
 createNewChatBtn.addEventListener('click', () => {
-    openCreateChatModal();
+    openCreateChatModal();
 });
 
 confirmCreateChatBtn.addEventListener('click', () => {
-    const chatName = newChatNameInput.value.trim();
-    const participantsArray = Array.from(selectedParticipants);
-    if (participantsArray.length === 0) {
-        alert('Please select at least one participant.');
-        return;
-    }
+    const chatName = newChatNameInput.value.trim();
+    const participantsArray = Array.from(selectedParticipants);
+    if (participantsArray.length === 0) {
+        alert('Please select at least one participant.');
+        return;
+    }
 
-    const chatType = participantsArray.length === 1 ? 'private' : 'group';
+    const chatType = participantsArray.length === 1 ? 'private' : 'group';
 
-    socket.emit('createChat', {
-        participants: participantsArray,
-        type: chatType,
-        name: chatName
-    });
+    socket.emit('createChat', {
+        participants: participantsArray,
+        type: chatType,
+        name: chatName
+    });
 });
 
 cancelCreateChatBtn.addEventListener('click', () => {
-    closeCreateChatModal();
+    closeCreateChatModal();
 });
 
 function openCreateChatModal() {
-    createChatModal.style.display = 'block';
-    selectedParticipants.clear();
-    newChatNameInput.value = '';
-    renderAvailableStudents();
+    createChatModal.style.display = 'block';
+    selectedParticipants.clear();
+    newChatNameInput.value = '';
+    renderAvailableStudents();
 }
 
 function closeCreateChatModal() {
-    createChatModal.style.display = 'none';
+    createChatModal.style.display = 'none';
 }
 
 function renderAvailableStudents() {
-    availableStudentsDiv.innerHTML = '<h4>Select Participants:</h4>';
-    if (availableStudents.length === 0) {
-        availableStudentsDiv.innerHTML += '<p>No other students available.</p>';
-        return;
-    }
+    availableStudentsDiv.innerHTML = '<h4>Select Participants:</h4>';
+    if (availableStudents.length === 0) {
+        availableStudentsDiv.innerHTML += '<p>No other students available.</p>';
+        return;
+    }
 
-    availableStudents.forEach(student => {
-        const div = document.createElement('div');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `student-${student.mysqlUserId}`;
-        checkbox.value = student.mysqlUserId;
-        checkbox.checked = selectedParticipants.has(student.mysqlUserId);
+    availableStudents.forEach(student => {
+        const div = document.createElement('div');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `student-${student.mysqlUserId}`;
+        checkbox.value = student.mysqlUserId;
+        checkbox.checked = selectedParticipants.has(student.mysqlUserId);
 
-        checkbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                selectedParticipants.add(student.mysqlUserId);
-            } else {
-                selectedParticipants.delete(student.mysqlUserId);
-            }
-        });
+        checkbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                selectedParticipants.add(student.mysqlUserId);
+            } else {
+                selectedParticipants.delete(student.mysqlUserId);
+            }
+        });
 
-        const label = document.createElement('label');
-        label.htmlFor = `student-${student.mysqlUserId}`;
-        label.textContent = `${student.name} ${student.lastname} (${student.loginName})`;
-        const statusSpan = document.createElement('span');
-        statusSpan.classList.add('user-status');
-        if(student.status === 'online') {
-            statusSpan.textContent = ' (online)';
-            statusSpan.style.color = 'green';
-            label.style.fontWeight = 'bold'; 
-        } else {
-            statusSpan.textContent = ' (offline)';
-            statusSpan.style.color = 'gray';
-        }
-        label.appendChild(statusSpan);
+        const label = document.createElement('label');
+        label.htmlFor = `student-${student.mysqlUserId}`;
+        label.textContent = `${student.name} ${student.lastname} (${student.loginName})`;
+        const statusSpan = document.createElement('span');
+        statusSpan.classList.add('user-status');
+        if(student.status === 'online') {
+            statusSpan.textContent = ' (online)';
+            statusSpan.style.color = 'green';
+            label.style.fontWeight = 'bold'; 
+        } else {
+            statusSpan.textContent = ' (offline)';
+            statusSpan.style.color = 'gray';
+        }
+        label.appendChild(statusSpan);
 
-        div.appendChild(checkbox);
-        div.appendChild(label);
-        availableStudentsDiv.appendChild(div);
-    });
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        availableStudentsDiv.appendChild(div);
+    });
 }
-

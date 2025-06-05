@@ -133,8 +133,10 @@ function getDisplayName(userId) {
 }
 
 function renderMessageComponent(msg) {
+    // Add a data-chat-id attribute to the message div
+    // And attach a click event listener to it
     return `
-        <div class="message">
+        <div class="message" data-chat-id="${msg.chatId}">
             <div class="message-content">
                 <span class="user-name">${msg.user}</span>
                 <p class="message-text">${msg.text}</p>
@@ -165,6 +167,18 @@ function updateUnreadDropdown() {
         if (markAllReadBtn) {
             markAllReadBtn.addEventListener('click', markAllUnreadAsRead);
         }
+
+        // --- NEW CHANGE: Attach click listeners to each message in the dropdown ---
+        dropdown.querySelectorAll('.message').forEach(messageDiv => {
+            messageDiv.addEventListener('click', (event) => {
+                const clickedChatId = messageDiv.dataset.chatId; // Get the chat ID from the data attribute
+                if (clickedChatId) {
+                    // Navigate to the messages page with the chat ID as a query parameter
+                    window.location.href = `/messages?chatId=${clickedChatId}`;
+                }
+            });
+        });
+        // --- END NEW CHANGE ---
     }
 }
 
