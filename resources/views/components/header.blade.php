@@ -22,9 +22,7 @@
                         <div id="notification-circle" class="notification-circle"></div>
                     </div>
                     <div class="dropdown">
-                        <x-message user="Maksbid" text="Ну велике завдання" avatar="avatar2" />
-                        <x-message user="k_olefir" text="💀💀💀" avatar="avatar3" />
-                        <x-message user="gardar" text="*Чому я gardar*" avatar="avatar4" />
+
                     </div>
                 </div>
             <div class="user-info">

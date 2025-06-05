@@ -6,6 +6,7 @@ const socket = io(SOCKET_SERVER_URL);
 let currentChatId = null; 
 let availableStudents = []; 
 let selectedParticipants = new Set(); 
+let unreadMessages = [];
 
 
 const currentUser = {
@@ -29,26 +30,12 @@ socket.on('disconnect', () => {
     console.log('Disconnected from chat server.');
 });
 
-socket.on('newMessage', (message) => {
-        console.log('New message in another chat or outside /messages:', message);
 
-        const plane = document.querySelector('.plane-icon');
-        plane.classList.add('animate');
-        document.getElementById('notification-circle').style.opacity = 1;
-        document.querySelector('.notifications').classList.add('no-hover');
-
-        setTimeout(() => {
-            plane.classList.remove('animate');
-        }, 500);
-
-        setTimeout(() => {
-            document.querySelector('.notifications').classList.remove('no-hover');
-        }, 750);
-});
 
 socket.on('newNotification', (notification) => {
     console.log('Notification received:', notification);
 
+    // Animate the icon
     const plane = document.querySelector('.plane-icon');
     plane.classList.add('animate');
     document.getElementById('notification-circle').style.opacity = 1;
@@ -61,6 +48,17 @@ socket.on('newNotification', (notification) => {
     setTimeout(() => {
         document.querySelector('.notifications').classList.remove('no-hover');
     }, 750);
+
+    // Add to unreadMessages (most recent at the top)
+    unreadMessages.unshift({
+        user: notification.sender,
+        text: notification.snippet
+    });
+
+    // Keep only latest 3
+    unreadMessages = unreadMessages.slice(0, 3);
+
+    updateUnreadDropdown();
 });
 
 
@@ -72,3 +70,25 @@ socket.on('userStatusUpdate', (data) => {
         userElement.classList.add(data.status);
     }
 });
+
+document.querySelector('.notificationsIcon').addEventListener('click', () => {
+    unreadMessages = [];
+    updateUnreadDropdown();
+    document.getElementById('notification-circle').style.opacity = 0;
+});
+
+function renderMessageComponent(msg) {
+    return `
+        <div class="message">
+            <div class="message-content">
+                <span class="user-name">${msg.user}</span>
+                <p class="message-text">${msg.text}</p>
+            </div>
+        </div>
+    `;
+}
+
+function updateUnreadDropdown() {
+    const dropdown = document.querySelector('.notifications .dropdown');
+    dropdown.innerHTML = unreadMessages.map(renderMessageComponent).join('');
+}
