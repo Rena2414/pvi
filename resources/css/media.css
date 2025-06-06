@@ -5,6 +5,9 @@
     }
 
 
+    .hamburger-menu {
+        display: block;
+    }
     .main-content {
         margin-left: 0;
         padding-top: 60px;
@@ -42,19 +45,6 @@
     }
     
 
-
-    .side-panel {
-        width: 140px;
-        position: fixed;
-        top: 60px;
-        left: 0;
-        transform: translateX(-100%);
-    }
-
-    .side-panel.hidden {
-        transform: translateX(0); 
-    }
-
     .main-content {
         margin-left: 0;
         padding-top: 60px;
@@ -69,6 +59,9 @@
         padding: 15px;
     }
 
+    .hamburger-menu {
+        display: block;
+    }
     .message, .dropdown2{
         font-size: 16px;
     }
@@ -83,6 +76,10 @@
     body {
         font-size: 20px;
         padding: 20px;
+    }
+
+    .hamburger-menu {
+        display: block;
     }
 
     .message, .dropdown2{
@@ -101,6 +98,9 @@
         padding: 25px;
     }
 
+    .hamburger-menu {
+        display: block;
+    }
     .message, .dropdown2{
         font-size: 16px;
     }

@@ -113,6 +113,24 @@
     display: none;
 }
 
+.mark-all-read-button{
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    background-color: transparent;
+    color:#464646;
+    font-size: small;
+    border: none;
+    border-radius: 5px;
+}
+
+.mark-all-read-button:hover{
+    color: #000000;
+}
+
 
 /* Profile Dropdown */
 .dropdown2 {
