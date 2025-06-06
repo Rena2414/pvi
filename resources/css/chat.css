@@ -473,3 +473,18 @@
 #add-participant-modal .modal-content > button + button {
     margin-left: 10px;
 }
+
+
+
+.message-dropdown-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+}
+
+.message-dropdown-item:hover {
+    background-color: #eaf4ff;
+}

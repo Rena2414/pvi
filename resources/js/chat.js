@@ -115,7 +115,7 @@ function processInitialData() {
     if (receivedAllUsersData && pendingUnreadMessages.length > 0) {
         console.log("[chat.js] All users and pending unread messages received. Processing unread messages.");
         processUnreadMessages(pendingUnreadMessages);
-        pendingUnreadMessages = []; // Clear pending messages after processing
+        pendingUnreadMessages = []; 
     }
 }
 
@@ -248,22 +248,18 @@ socket.on('chatHistory', (data) => {
 
 socket.on('newMessage', (message) => {
     if (message.chatId === currentChatId) {
-        // Message is for the currently open chat, display it directly
         displayMessage(message);
         messagesHistory.scrollTop = messagesHistory.scrollHeight;
-        // Mark as read immediately since the user is viewing the chat
         socket.emit('markMessagesAsRead', {
             chatId: message.chatId,
             userId: currentUser.mysqlUserId,
-            messageIds: [message._id] // Mark this specific message as read
+            messageIds: [message._id] 
         });
-        // Request unread messages to update the dropdown (should decrease count)
         socket.emit('getUnreadMessages', currentUser.mysqlUserId);
     } else {
-        // Message is for another chat, trigger notification and update dropdown
         console.log('New message in another chat:', message);
-        triggerNotificationAnimation(); // New function call
-        socket.emit('getUnreadMessages', currentUser.mysqlUserId); // Request unread messages to update dropdown
+        triggerNotificationAnimation(); 
+        socket.emit('getUnreadMessages', currentUser.mysqlUserId); 
     }
 });
 
@@ -275,8 +271,8 @@ socket.on('refreshMyChatsList', () => {
 socket.on('newNotification', (notification) => {
     if (notification.chatId !== currentChatId) {
         console.log('Notification received:', notification);
-        triggerNotificationAnimation(); // Use the consolidated function
-        socket.emit('getUnreadMessages', currentUser.mysqlUserId); // Request unread messages
+        triggerNotificationAnimation(); 
+        socket.emit('getUnreadMessages', currentUser.mysqlUserId); 
     }
 });
 
@@ -567,7 +563,6 @@ createNewChatBtn.addEventListener('click', () => {
 confirmCreateChatBtn.addEventListener('click', () => {
     const chatName = newChatNameInput.value.trim();
     const participantsArray = Array.from(selectedParticipants);
-    // Always include the current user in the participants array for the server
     participantsArray.push(currentUser.mysqlUserId); 
 
     if (participantsArray.length === 0 || (participantsArray.length === 1 && participantsArray[0] === currentUser.mysqlUserId)) {
@@ -605,30 +600,44 @@ closeAddParticipantsBtn.addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const notificationsPageIcon = document.querySelector('.notificationsIcon'); // Assuming this takes you to /messages page
+    const notificationsPageIcon = document.querySelector('.notificationsIcon'); 
     if (notificationsPageIcon) {
         notificationsPageIcon.addEventListener('click', () => {
             if (notificationCircle) notificationCircle.style.opacity = 0;
-            window.location.href = '/messages'; // Navigate to the page that loads chat.js
+            window.location.href = '/messages'; 
         });
     }
 });
 
 
-// --- ADD THESE NEW FUNCTIONS ---
-
-// Function to encapsulate processing unread messages
 function processUnreadMessages(messages) {
-    // Filter out messages for the currently open chat from the unread list
-    unreadMessages = messages.filter(msg => msg.chatId !== currentChatId).map(msg => ({
-        chatId: msg.chatId,
-        user: getDisplayName(msg.senderId), // Uses allUsers map via getDisplayName
-        text: msg.message,
-        _id: msg._id // Ensure message ID is passed for marking specific messages
-    }));
+    unreadMessages = messages.filter(msg => msg.chatId !== currentChatId).map(msg => {
+        const chat = activeChats.find(c => c._id === msg.chatId);
+        let chatDisplayName = 'Unknown Chat'; 
+
+        if (chat) {
+            if (chat.type === 'private' && chat.otherParticipantMySqlId) {
+                const otherUser = allUsers.get(chat.otherParticipantMySqlId);
+                if (otherUser) {
+                    chatDisplayName = `${otherUser.name} ${otherUser.lastname}`;
+                } else {
+                    chatDisplayName = chat.name || 'Private Chat';
+                }
+            } else {
+                chatDisplayName = chat.name || 'Group Chat';
+            }
+        }
+
+        return {
+            chatId: msg.chatId,
+            user: getDisplayName(msg.senderId), 
+            text: msg.message,
+            _id: msg._id,
+            chatDisplayName: chatDisplayName 
+        };
+    });
     updateUnreadDropdown();
 
-    // Update notification circle opacity based on message count
     if (notificationCircle) {
         notificationCircle.style.opacity = unreadMessages.length > 0 ? 1 : 0;
     }
@@ -637,7 +646,7 @@ function processUnreadMessages(messages) {
 function getDisplayName(userId) {
     if (userId === currentUser.mysqlUserId) return 'You';
 
-    const user = allUsers.get(userId); // Use allUsers map directly
+    const user = allUsers.get(userId); 
 
     if (user) {
         if (user.name && user.lastname) {
@@ -647,21 +656,23 @@ function getDisplayName(userId) {
             return user.loginName;
         }
     }
-    return `User ${userId}`; // Fallback if user not found or incomplete data
+    return `User ${userId}`; 
 }
 
 function renderMessageComponent(msg) {
-    // This renders a single message item in the dropdown
     return `
         <div class="message-dropdown-item" data-chat-id="${msg.chatId}" data-message-id="${msg._id}">
             <div class="message-content">
-                <span class="user-name">${msg.user}</span>
+                
+                <span class="user-name" style="font-weight: bold;">${msg.user}</span>
                 <p class="message-text">${msg.text}</p>
             </div>
         </div>
     `;
 }
 
+
+//<span class="chat-name">${msg.chatDisplayName}</span>
 function updateUnreadDropdown() {
     if (!notificationsDropdown) {
         console.error('Notifications dropdown element not found!');
@@ -684,59 +695,69 @@ function updateUnreadDropdown() {
         }
 
         notificationsDropdown.querySelectorAll('.message-dropdown-item').forEach(messageDiv => {
-            messageDiv.addEventListener('click', (event) => {
-                const clickedChatId = messageDiv.dataset.chatId;
-                const clickedMessageId = messageDiv.dataset.messageId; // Get message ID
-                if (clickedChatId) {
-                    // Mark this specific message as read
-                    socket.emit('markMessagesAsRead', {
-                        chatId: clickedChatId,
-                        userId: currentUser.mysqlUserId,
-                        messageIds: [clickedMessageId]
-                    });
-                    // Navigate to the chat page with the chat ID in the URL
-                    window.location.href = `/messages?chatId=${clickedChatId}`;
-                }
+    messageDiv.addEventListener('click', (event) => {
+        const clickedChatId = messageDiv.dataset.chatId;
+        const clickedMessageId = messageDiv.dataset.messageId;
+
+        const clickedUnreadMsg = unreadMessages.find(um => um._id === clickedMessageId);
+        let chatDisplayName = clickedUnreadMsg ? clickedUnreadMsg.chatDisplayName : 'Chat';
+
+        if (clickedChatId) {
+            socket.emit('markMessagesAsRead', {
+                chatId: clickedChatId,
+                userId: currentUser.mysqlUserId,
+                messageIds: [clickedMessageId]
             });
-        });
+
+            joinChat(clickedChatId, chatDisplayName);
+
+
+            if (notificationsDropdown) {
+                notificationsDropdown.classList.remove('is-open');
+            }
+        }
+    });
+});
     }
+}
+
+
+
+
+if (notificationsContainer && notificationsDropdown) {
+    notificationsContainer.addEventListener('click', (event) => {
+        notificationsDropdown.classList.toggle('is-open');
+
+        event.stopPropagation();
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!notificationsContainer.contains(event.target)) {
+
+            if (notificationsDropdown.classList.contains('is-open')) {
+                notificationsDropdown.classList.remove('is-open');
+            }
+        }
+    });
 }
 
 function markAllUnreadAsRead() {
     const allUnreadMessageIds = unreadMessages.map(msg => msg._id);
 
     if (allUnreadMessageIds.length > 0) {
-        // Emit for all unique message IDs if your server supports marking multiple messages as read
         socket.emit('markMessagesAsRead', {
-            chatId: null, // Set to null or a specific chat ID if your server requires it
+            chatId: null,
             userId: currentUser.mysqlUserId,
             messageIds: allUnreadMessageIds
         });
     }
 
-    unreadMessages = []; // Clear local unread messages
-    updateUnreadDropdown(); // Update the UI to show no messages
+    unreadMessages = [];
+    updateUnreadDropdown();
     if (notificationCircle) {
         notificationCircle.style.opacity = 0;
     }
-}
-
-
-if (notificationsContainer) {
-    notificationsContainer.addEventListener('click', (event) => {
-        // Prevent click inside dropdown from closing it
-        if (notificationsDropdown && notificationsDropdown.contains(event.target)) {
-            return;
-        }
-        // Toggle display
-        notificationsDropdown.style.display = notificationsDropdown.style.display === 'block' ? 'none' : 'block';
-    });
-    // Close dropdown if clicked outside
-    document.addEventListener('click', (event) => {
-        if (notificationsContainer && !notificationsContainer.contains(event.target)) {
-            if (notificationsDropdown) {
-                notificationsDropdown.style.display = 'none';
-            }
-        }
-    });
+    if (notificationsDropdown) {
+        notificationsDropdown.classList.remove('is-open');
+    }
 }
