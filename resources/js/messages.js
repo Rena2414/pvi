@@ -3,14 +3,13 @@ import { io } from 'socket.io-client';
 const SOCKET_SERVER_URL = 'http://localhost:3000';
 
 const socket = io(SOCKET_SERVER_URL);
-let currentChatId = null; // Unused in messages.js, can be removed
+let currentChatId = null; 
 let availableStudents = [];
-let selectedParticipants = new Set(); // Unused in messages.js, can be removed
+let selectedParticipants = new Set(); 
 let unreadMessages = [];
 
-// NEW: Flag and container for managing data dependencies
 let allStudentsReceived = false;
-let pendingUnreadMessages = []; // To store messages received before students are ready
+let pendingUnreadMessages = []; 
 
 const currentUser = {
     mysqlUserId: window.chatConfig.studentId,
@@ -19,7 +18,6 @@ const currentUser = {
     lastname: window.chatConfig.studentLastname
 };
 
-// --- Socket Handlers ---
 
 socket.on('connect', () => {
     console.log('Connected to chat server from messages.js!', socket.id);
@@ -29,9 +27,8 @@ socket.on('connect', () => {
         name: currentUser.name,
         lastname: currentUser.lastname
     });
-    // Request all students when connected, needed for getDisplayName
-    socket.emit('requestAllUsers'); // Use 'requestAllUsers' as per chat.js and server.js
-    socket.emit('getUnreadMessages', currentUser.mysqlUserId); // Request unread messages
+    socket.emit('requestAllUsers');
+    socket.emit('getUnreadMessages', currentUser.mysqlUserId); 
 });
 
 socket.on('disconnect', () => {
@@ -66,29 +63,23 @@ socket.on('newNotification', (notification) => {
         }
     }, 750);
 
-    // After a new notification, re-fetch unread messages to update the dropdown
     socket.emit('getUnreadMessages', currentUser.mysqlUserId);
 });
 
-// NEW: Changed from 'allStudents' to 'allUsersList' for consistency with chat.js/server.js
 socket.on('allUsersList', (users) => {
-    // Populate availableStudents with full user data
     availableStudents = users;
     allStudentsReceived = true;
     console.log("All users loaded and availableStudents populated in messages.js:", availableStudents);
 
-    // If unread messages were received before users, process them now
     if (pendingUnreadMessages.length > 0) {
         console.log("Processing pending unread messages with updated user data.");
         processUnreadMessages(pendingUnreadMessages);
-        pendingUnreadMessages = []; // Clear pending messages
+        pendingUnreadMessages = []; 
     }
 });
 
 socket.on('userStatusUpdate', (data) => {
     console.log('User status update (messages.js):', data);
-    // This part might be relevant if you display user status within the notification dropdown.
-    // If not, you can remove this handler from messages.js for simplicity.
     const userElement = document.querySelector(`.user-list-item[data-user-id="${data.mysqlUserId}"]`);
     if (userElement) {
         userElement.classList.remove('online', 'offline');
@@ -97,13 +88,11 @@ socket.on('userStatusUpdate', (data) => {
 });
 
 
-// COMBINED and REVISED socket.on('unreadMessages')
 socket.on('unreadMessages', (messages) => {
     console.log('[Client Messages.js] Received unreadMessages:', messages);
     console.log('[Client Messages.js] Dropdown element:', document.querySelector('.notifications .dropdown'));
 
     if (!allStudentsReceived) {
-        // If all students haven't been received yet, store messages and wait
         pendingUnreadMessages = messages;
         console.log("Unread messages received before all users, storing them.");
         return;
@@ -112,7 +101,7 @@ socket.on('unreadMessages', (messages) => {
     processUnreadMessages(messages);
 });
 
-// NEW: Function to encapsulate processing unread messages
+
 function processUnreadMessages(messages) {
     unreadMessages = messages.map(msg => ({
         chatId: msg.chatId,
@@ -121,7 +110,6 @@ function processUnreadMessages(messages) {
     }));
     updateUnreadDropdown();
 
-    // Update notification circle opacity based on message count
     const notificationCircle = document.getElementById('notification-circle');
     if (notificationCircle) {
         notificationCircle.style.opacity = messages.length > 0 ? 1 : 0;
@@ -129,15 +117,13 @@ function processUnreadMessages(messages) {
 }
 
 
-// --- Utility Functions ---
 
 function getDisplayName(userId) {
     if (userId === currentUser.mysqlUserId) return 'You';
 
-    // Ensure availableStudents is populated before attempting to find
     if (availableStudents.length === 0) {
         console.warn(`getDisplayName: availableStudents is empty when looking for user ID: ${userId}.`);
-        return `User ${userId}`; // Fallback
+        return `User ${userId}`; 
     }
 
     const user = availableStudents.find(s => s.mysqlUserId == userId);
@@ -150,7 +136,7 @@ function getDisplayName(userId) {
             return user.loginName;
         }
     }
-    return `User ${userId}`; // Fallback if user not found or incomplete data
+    return `User ${userId}`; 
 }
 
 function renderMessageComponent(msg) {
@@ -190,7 +176,6 @@ function updateUnreadDropdown() {
             messageDiv.addEventListener('click', (event) => {
                 const clickedChatId = messageDiv.dataset.chatId;
                 if (clickedChatId) {
-                    // Navigate to the chat page with the chat ID in the URL
                     window.location.href = `/messages?chatId=${clickedChatId}`;
                 }
             });
@@ -208,22 +193,19 @@ function markAllUnreadAsRead() {
         });
     });
 
-    unreadMessages = []; // Clear local unread messages
-    updateUnreadDropdown(); // Update the UI to show no messages
+    unreadMessages = []; 
+    updateUnreadDropdown();
     const notificationCircle = document.getElementById('notification-circle');
     if (notificationCircle) {
         notificationCircle.style.opacity = 0;
     }
 }
 
-// --- DOM Content Loaded Listener ---
 
 document.addEventListener('DOMContentLoaded', () => {
     const notificationsIcon = document.querySelector('.notificationsIcon');
     if (notificationsIcon) {
         notificationsIcon.addEventListener('click', () => {
-            // This button navigates to the messages page (where chat.js loads)
-            // It also clears the notification circle if clicked
             const notificationCircle = document.getElementById('notification-circle');
             if (notificationCircle) {
                 notificationCircle.style.opacity = 0;
@@ -233,9 +215,5 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.error("Element with class 'notificationsIcon' not found.");
     }
-
-    // On initial load, request unread messages
-    // This is already done in socket.on('connect'), so this might be redundant,
-    // but keeping it here for safety to ensure request is sent on page load.
     socket.emit('getUnreadMessages', currentUser.mysqlUserId);
 });

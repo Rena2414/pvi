@@ -161,8 +161,8 @@ async function startApplication() {
             socket.on('requestAllUsers', async () => {
                 try {
                     const allUsersData = await usersCollection.find({}, { projection: { mysqlUserId: 1, loginName: 1, name: 1, lastname: 1, status: 1 } }).toArray();
-                    // Emit to the requesting socket only
-                    socket.emit('allUsersList', allUsersData); // Renamed the event for clarity
+
+                    socket.emit('allUsersList', allUsersData); 
                     console.log(`[Server] Sent ${allUsersData.length} users to client for allUsersList.`);
                 } catch (error) {
                     console.error('Error sending all users list on request:', error);
@@ -210,8 +210,8 @@ async function startApplication() {
 });
 
             socket.on('createChat', async (data) => {
-                let chatName = data.name; // Keep this for group chats, or fallback for private.
-            let otherParticipantMySqlId = null; // Initialize this variable
+                let chatName = data.name; 
+            let otherParticipantMySqlId = null; 
 
             if (data.type === 'private') {
                 const otherParticipantId = uniqueParticipants.find(p => p !== currentUserId);
@@ -219,13 +219,11 @@ async function startApplication() {
                 const currentUserDoc = await usersCollection.findOne({ mysqlUserId: currentUserId });
 
                 if (otherUser && currentUserDoc) {
-                    // Set chatName to be both login names for the server record of the chat
                     chatName = `${currentUserDoc.loginName} & ${otherUser.loginName}`;
-                    // Crucially, store the other participant's ID for client-side lookup
                     otherParticipantMySqlId = otherUser.mysqlUserId;
                 } else {
                     chatName = `Private Chat (${uniqueParticipants.join(', ')})`;
-                    otherParticipantMySqlId = otherParticipantId; // Store for fallback
+                    otherParticipantMySqlId = otherParticipantId; 
                 }
             }
 
@@ -235,7 +233,6 @@ async function startApplication() {
             });
             if (existingChat) {
                 socket.emit('chatError', 'Chat already exists.');
-                // Ensure existingChat also has otherParticipantMySqlId if it's a private chat
                 if (existingChat.type === 'private' && existingChat.participants.length === 2) {
                     existingChat.otherParticipantMySqlId = existingChat.participants.find(p => p !== currentUserId);
                 }
@@ -246,8 +243,8 @@ async function startApplication() {
             const newChat = {
                 type: data.type,
                 participants: uniqueParticipants,
-                name: chatName, // This will be "loginName1 & loginName2" for private chats
-                otherParticipantMySqlId: otherParticipantMySqlId, // ADD THIS LINE for private chats
+                name: chatName, 
+                otherParticipantMySqlId: otherParticipantMySqlId,
                 createdAt: new Date(),
                 updatedAt: new Date()
             };
@@ -269,8 +266,7 @@ socket.on('connect', () => {
         lastname: currentUser.lastname
     });
     socket.emit('requestChatsList', currentUser.mysqlUserId);
-    // Request the full list of all users when connecting
-    socket.emit('requestAllUsers'); // ADD THIS LINE
+    socket.emit('requestAllUsers');
     socket.emit('getUnreadMessages', currentUser.mysqlUserId);
 });
 
@@ -466,19 +462,17 @@ socket.on('requestChatsList', async (userId) => {
         const chatsWithDetails = [];
 
         for (const chat of userChats) {
-            const chatForClient = { ...chat }; // Create a copy
+            const chatForClient = { ...chat }; 
 
             if (chat.type === 'private') {
                 const otherParticipantId = chat.participants.find(p => p !== userId);
                 if (otherParticipantId) {
                     chatForClient.otherParticipantMySqlId = otherParticipantId;
 
-                    // Optional but recommended: Fetch other user's full name and status
-                    // to embed directly or ensure allUsers is fully populated
                     const otherUser = await usersCollection.findOne({ mysqlUserId: otherParticipantId });
                     if (otherUser) {
-                        chatForClient.name = `${otherUser.name} ${otherUser.lastname}`; // Set the name for direct use
-                        chatForClient.otherParticipantStatus = otherUser.status; // Embed status if preferred
+                        chatForClient.name = `${otherUser.name} ${otherUser.lastname}`;
+                        chatForClient.otherParticipantStatus = otherUser.status; 
                     } else {
                          chatForClient.name = `Unknown User (${otherParticipantId})`;
                     }
