@@ -57,7 +57,7 @@ function closeAddParticipantModal() {
 }
 
 function openCreateChatModal() {
-    createChatModal.style.display = 'block';
+    createChatModal.style.display = 'flex';
     selectedParticipants.clear();
     newChatNameInput.value = '';
     renderAvailableStudents(); 
@@ -72,7 +72,7 @@ function openAddParticipantModal() {
         alert('Please select a chat first.');
         return;
     }
-    addParticipantModal.style.display = 'block';
+    addParticipantModal.style.display = 'flex';
     selectedParticipants.clear();
     renderAvailableParticipantsForAdd(); 
 }

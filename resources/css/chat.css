@@ -261,34 +261,215 @@
 }
 
 /* Modal buttons */
-.modal-content button {
-    margin-top: 10px;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-#confirm-add-participants-btn {
-    background-color: #28a745;
-    color: white;
-}
-
-#cancel-add-participants-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-/* Create chat modal */
+/* Modal overlay covering entire screen */
 #create-chat-modal {
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+    display: none;           /* hidden by default */
+    position: fixed;         /* fixed to viewport */
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: flex;           /* center content */
+    justify-content: center;
+    align-items: center;
 }
 
-#create-chat-modal input {
-    width: 100%;
-    padding: 8px;
-    margin: 10px 0;
-    border-radius: 6px;
+/* Modal content box */
+#create-chat-modal .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+#create-chat-modal h4 {
+    margin: 0 0 15px 0;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+/* Available students container - scrollable */
+#available-students {
+    flex-grow: 1;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    min-height: 100px;
+}
+
+/* Each student displayed as block */
+#available-students > * {
+    background: white;
     border: 1px solid #ccc;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+/* Input field styling */
+#new-chat-name-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+}
+
+/* Buttons container */
+#create-chat-modal .modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+  gap: 20px; /* spacing between buttons */
+}
+
+.modal-footer button{
+    height: 40px;
+}
+
+/* Buttons styling */
+#create-chat-modal button {
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    padding: 8px 16px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    min-width: 120px;
+}
+
+#create-chat-modal button:hover {
+    background-color: #2d6fb5;
+}
+
+/* Cancel button different color */
+#cancel-create-chat-btn {
+    background-color: #6c757d;
+}
+
+#cancel-create-chat-btn:hover {
+    background-color: #5a6268;
+}
+
+
+#add-participant-modal {
+    display: none;               /* hidden by default */
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;              /* above everything */
+}
+
+/* Modal content box */
+#add-participant-modal .modal-content {
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 5px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;           /* limit max height to viewport */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Close button top-right */
+#add-participant-modal .close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #0d6efd;
+    cursor: pointer;
+    background: none;
+    border: none;
+    line-height: 1;
+    user-select: none;
+    transition: color 0.3s;
+}
+
+#add-participant-modal .close-button:hover {
+    color: #003E80;
+}
+
+/* Header */
+#add-participant-modal h2 {
+    margin: 0 0 20px 0;
+    font-weight: 600;
+    color: #222;
+}
+
+/* Available participants container */
+#available-participants-for-add {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+/* Style each participant block inside (assuming div or similar) */
+#available-participants-for-add > * {
+    background-color: #f9f9f9;
+    margin-bottom: 8px;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+#available-participants-for-add > *:hover {
+    background-color: #eaf4ff;
+}
+
+/* Buttons container — optional flex to align buttons nicely */
+#add-participant-modal .modal-content > button {
+    background: #0d6efd;
+    border-radius: 1.2vh;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 170px;
+    height: 30px;
+    margin: 0 10px 0 0;
+    transition: background-color 0.3s ease;
+    align-self: flex-start; /* aligns buttons to left */
+}
+
+#add-participant-modal .modal-content > button:hover {
+    background: #003E80;
+}
+
+/* To keep buttons side by side with some spacing */
+#add-participant-modal .modal-content > button + button {
+    margin-left: 10px;
 }

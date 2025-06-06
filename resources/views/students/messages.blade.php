@@ -20,16 +20,7 @@
 
 
 
-<div id="add-participant-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-button" id="close-add-participants-btn">&times;</span>
-        <h2>Add Participants to Chat</h2>
-        <div id="available-participants-for-add">
-            </div>
-        <button id="confirm-add-participants-btn">Add Participants</button>
-        <button id="cancel-add-participants-btn">Cancel</button>
-    </div>
-</div>
+
 
             <div class="chat-window">
                 <div class="chat-header">
@@ -52,19 +43,35 @@
                 </div>
             </div>
 
-            <div id="create-chat-modal" style="display: none; border: 1px solid #ccc; padding: 20px; background: white; position: absolute; z-index: 100;">
-                <h4>Create New Chat</h4>
-                <div id="available-students">
-
-                    <p>Loading students...</p>
-                </div>
-                <input type="text" id="new-chat-name-input" placeholder="Group chat name (optional)">
-                <button id="confirm-create-chat-btn">Create Chat</button>
-                <button id="cancel-create-chat-btn">Cancel</button>
-            </div>
+            <div id="create-chat-modal" style="display: none;">
+  <div class="modal-content">
+    <h4>Create New Chat</h4>
+    <div id="available-students">
+      <p>Loading students...</p>
+    </div>
+    <input type="text" id="new-chat-name-input" placeholder="Group chat name (optional)">
+    <div class="modal-footer">
+      <button id="confirm-create-chat-btn">Create Chat</button>
+      <button id="cancel-create-chat-btn">Cancel</button>
+    </div>
+  </div>
+</div>
         </div>
     </div>
 
+
+    <div id="add-participant-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" id="close-add-participants-btn">&times;</span>
+        <h2>Add Participants to Chat</h2>
+        <div id="available-participants-for-add">
+            </div>
+        <div class="modal-footer">
+            <button id="confirm-add-participants-btn" class="create-btn">Add Participants</button>
+            <button id="cancel-add-participants-btn" class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+</div>
 
     <script>
         window.chatConfig = {
