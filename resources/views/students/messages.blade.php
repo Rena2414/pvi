@@ -18,11 +18,11 @@
                 </div>
             </div>
 
-            <button id="add-participant-btn">Add Participant</button>
+
 
 <div id="add-participant-modal" class="modal">
     <div class="modal-content">
-        <span class="close-button" onclick="closeAddParticipantModal()">&times;</span>
+        <span class="close-button" id="close-add-participants-btn">&times;</span>
         <h2>Add Participants to Chat</h2>
         <div id="available-participants-for-add">
             </div>
@@ -32,7 +32,10 @@
 </div>
 
             <div class="chat-window">
-                <h3 id="current-chat-name">Select a Chat</h3>
+                <div class="chat-header">
+                    <h3 id="current-chat-name">Select a Chat</h3>
+                    <button id="add-participant-btn">Add Participant</button>
+                </div>
                 <div class="messages-history" id="messages-history">
 
                 </div>

@@ -9,6 +9,13 @@ let activeChats = [];     // Still needed for currently loaded chats
 let availableStudents = [];
 let selectedParticipants = new Set(); 
 
+
+
+function closeAddParticipantModal() {
+    addParticipantModal.style.display = 'none';
+    selectedParticipants.clear();
+}
+
 const currentUser = {
     mysqlUserId: window.chatConfig.studentId,
     loginName: window.chatConfig.loginName,
@@ -33,7 +40,12 @@ const addParticipantModal = document.getElementById('add-participant-modal');
 const availableParticipantsDiv = document.getElementById('available-participants-for-add');
 const confirmAddParticipantsBtn = document.getElementById('confirm-add-participants-btn');
 const cancelAddParticipantsBtn = document.getElementById('cancel-add-participants-btn');
+const closeAddParticipantsBtn = document.getElementById('close-add-participants-btn');
 
+
+
+document.getElementById('add-participant-btn').style.display = 'none';
+document.getElementById('current-chat-name').textContent = 'Select a Chat';
 // --- Socket Event Handlers ---
 
 socket.on('connect', () => {
@@ -275,7 +287,7 @@ function joinChat(chatId, chatName) {
          const prevChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
          if (prevChatItem) prevChatItem.classList.remove('active-chat');
      }
-
+ 
     currentChatId = chatId;
      currentChatName.textContent = chatName;
 
@@ -289,6 +301,8 @@ function joinChat(chatId, chatName) {
 
      const newChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
     if (newChatItem) newChatItem.classList.add('active-chat');
+    document.getElementById('add-participant-btn').style.display = 'inline-block';
+    document.getElementById('current-chat-name').textContent = chatName;
 }
 
 
@@ -342,6 +356,10 @@ confirmAddParticipantsBtn.addEventListener('click', () => {
 });
 
 cancelAddParticipantsBtn.addEventListener('click', () => {
+    closeAddParticipantModal();
+});
+
+closeAddParticipantsBtn.addEventListener('click', () => {
     closeAddParticipantModal();
 });
 
@@ -412,10 +430,7 @@ function openAddParticipantModal() {
     renderAvailableParticipantsForAdd();
 }
 
-function closeAddParticipantModal() {
-    addParticipantModal.style.display = 'none';
-    selectedParticipants.clear();
-}
+
 
 function renderAvailableParticipantsForAdd() {
     availableParticipantsDiv.innerHTML = '<h4>Select Participants to Add:</h4>';
