@@ -124,6 +124,57 @@
     cursor: pointer;
 }
 
+
+
+.message-item {
+    max-width: 70%;
+    margin: 8px 0;
+    padding: 10px 14px;
+    border-radius: 16px;
+    position: relative;
+    word-wrap: break-word;
+    clear: both;
+    display: inline-block;
+    line-height: 1.4;
+}
+
+/* Your own messages */
+.message-item.sent {
+    background-color: #dcf8c6;
+    align-self: flex-end;
+    float: right;
+    border-top-right-radius: 0;
+    text-align: left;
+}
+
+/* Messages from others */
+.message-item.received {
+    background-color: #e4e6eb;
+    align-self: flex-start;
+    float: left;
+    border-top-left-radius: 0;
+    text-align: left;
+}
+
+/* Sender name */
+.message-item strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: #333;
+}
+
+/* Timestamp */
+.message-item .timestamp {
+    position: absolute;
+    bottom: 4px;
+    right: 10px;
+    font-size: 11px;
+    color: #555;
+    opacity: 0.6;
+}
+
+
 /* Add participant */
 #add-participant-btn {
     position: absolute;

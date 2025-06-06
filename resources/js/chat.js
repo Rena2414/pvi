@@ -57,40 +57,36 @@ socket.on('chatError', (message) => {
 
 socket.on('chatsList', (chats) => {
     console.log('Received chats list:', chats);
-    chatsList.innerHTML = ''; 
-    activeChats = chats;
+    chatsList.innerHTML = '';
+    activeChats = chats; 
+
     chats.forEach(chat => {
         const chatItem = document.createElement('div');
         chatItem.classList.add('chat-item');
         chatItem.dataset.chatId = chat._id;
         let displayName = chat.name;
+
         if (chat.type === 'private' && chat.participants.length === 2) {
-             const otherParticipantId = chat.participants.find(p => p !== currentUser.mysqlUserId);
-             const otherUser = availableStudents.find(s => s.mysqlUserId === otherParticipantId);
+            const otherParticipantId = chat.participants.find(p => p !== currentUser.mysqlUserId);
+
+            const otherUser = availableStudents.find(s => s.mysqlUserId === otherParticipantId);
+
             if (otherUser) {
                 displayName = `${otherUser.name} ${otherUser.lastname}`;
             } else {
-                displayName = `Private Chat with ID: ${otherParticipantId}`;
-             }
-         }
-         chatItem.textContent = displayName;
-         chatItem.addEventListener('click', () => joinChat(chat._id, displayName));
-         chatsList.appendChild(chatItem);
-    });
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const chatIdFromUrl = urlParams.get('chatId');
-
-    if (chatIdFromUrl && !currentChatId) { 
-        const chatToOpen = chats.find(chat => chat._id === chatIdFromUrl);
-        if (chatToOpen) {
-            console.log(`[chat.js] Auto-joining chat from URL: ${chatIdFromUrl}`);
-            joinChat(chatToOpen._id, chatToOpen.name); 
-        } else {
-            console.warn(`[chat.js] Chat ID ${chatIdFromUrl} from URL not found in received chats list.`);
+                
+                console.warn(`User details not found for ID: ${otherParticipantId}. Displaying generic name.`);
+                displayName = `Unknown User`; 
+            }
         }
-    }
+        chatItem.textContent = displayName;
+        chatItem.addEventListener('click', () => joinChat(chat._id, displayName));
+        chatsList.appendChild(chatItem);
+    });
 });
+
+
+
 
 
 
@@ -214,22 +210,32 @@ socket.on('allStudents', (students) => {
 
 function displayMessage(message) {
     const messageElement = document.createElement('div');
-    messageElement.classList.add('message-item');
-    let senderDisplayName = message.senderId === currentUser.mysqlUserId ? 'You' : message.senderId;
+    const isSent = message.senderId === currentUser.mysqlUserId;
+    messageElement.classList.add('message-item', isSent ? 'sent' : 'received');
 
-    if (message.senderId !== currentUser.mysqlUserId) {
+    let senderDisplayName = isSent ? `${currentUser.name} ${currentUser.lastname} (You)` : message.senderId;
+
+    if (!isSent) {
         const senderUser = availableStudents.find(s => s.mysqlUserId === message.senderId);
         if (senderUser) {
             senderDisplayName = `${senderUser.name} ${senderUser.lastname}`;
         }
-    } else {
-         senderDisplayName = `${currentUser.name} ${currentUser.lastname} (You)`; 
-     }
+    }
 
-     const timestamp = new Date(message.timestamp).toLocaleTimeString();
-     messageElement.innerHTML = `<strong>${senderDisplayName}:</strong> ${message.message} <span class="timestamp">${timestamp}</span>`;
+    const timestamp = new Date(message.timestamp).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    messageElement.innerHTML = `
+        <strong>${senderDisplayName}</strong>
+        <div>${message.message}</div>
+        <span class="timestamp">${timestamp}</span>
+    `;
+
     messagesHistory.appendChild(messageElement);
 }
+
 
 
 function joinChat(chatId, chatName) {
@@ -405,6 +411,7 @@ function renderAvailableParticipantsForAdd() {
         checkbox.type = 'checkbox';
         checkbox.id = `add-student-${student.mysqlUserId}`;
         checkbox.value = student.mysqlUserId;
+
         checkbox.checked = selectedParticipants.has(student.mysqlUserId);
 
         checkbox.addEventListener('change', (e) => {

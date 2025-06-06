@@ -436,14 +436,31 @@ socket.on('addParticipantsToChat', async ({ chatId, newParticipantIds }) => {
 socket.on('requestChatsList', async (userId) => {
     console.log(`[Server] User ${userId} requested their chats list.`);
     try {
-        const userChats = await chatsCollection.find({ participants: userId.toString() }).toArray();
+        let userChats = await chatsCollection.find({ participants: userId.toString() }).toArray();
+
+        for (const chat of userChats) {
+            if (chat.type === 'private' && chat.participants.length === 2) {
+                const otherParticipantId = chat.participants.find(p => p !== userId.toString());
+                const currentUserDoc = await usersCollection.findOne({ mysqlUserId: userId.toString() }); // Fetch current user's details for their name
+
+                if (otherParticipantId) {
+                    const otherUser = await usersCollection.findOne({ mysqlUserId: otherParticipantId });
+                    if (otherUser && currentUserDoc) {
+                        chat.name = `${otherUser.name} ${otherUser.lastname}`;
+                    } else {
+                        chat.name = `Private Chat (User ID: ${otherParticipantId})`;
+                    }
+                }
+            }
+        }
+
         io.to(`user-${userId}`).emit('chatsList', userChats);
         console.log(`[Server] Sent ${userChats.length} chats to user ${userId}.`);
     } catch (error) {
         console.error(`Error fetching chats list for user ${userId}:`, error);
         io.to(`user-${userId}`).emit('chatError', 'Failed to retrieve chat list.');
     }
-});        
+});
 
 socket.on('markMessagesAsRead', async ({ chatId, userId }) => {
     try {
