@@ -192,7 +192,6 @@ async function startApplication() {
     const allStudents = await usersCollection.find({}, { projection: { mysqlUserId: 1, loginName: 1, name: 1, lastname: 1, status: 1 } }).toArray();
     socket.emit('allStudents', allStudents);
 
-    // ADD THIS LINE: After a user connects and their data is set, fetch and emit their unread messages
     io.to(`user-${currentUserId}`).emit('getUnreadMessages', currentUserId);
 });
 
@@ -246,8 +245,11 @@ async function startApplication() {
             });
 
 
+
+
+
             socket.on('joinChat', async (chatId) => {
-    if (!chatId || !currentUserId) { // Added currentUserId check
+    if (!chatId || !currentUserId) { 
         socket.emit('chatError', 'Invalid chat ID or user not connected.');
         return;
     }
@@ -260,7 +262,6 @@ async function startApplication() {
     socket.join(chatId);
     console.log(`User ${currentUserLoginName} joined chat room: ${chatId}`);
 
-    // Mark all unread messages in this chat as read by the current user
     try {
         const userIdStr = currentUserId.toString();
         const result = await messagesCollection.updateMany(
@@ -278,7 +279,6 @@ async function startApplication() {
                                     .toArray();
     socket.emit('chatHistory', { chatId: chatId, messages: history });
 
-    // After joining and marking messages as read, re-emit unread messages for this user
     io.to(`user-${currentUserId}`).emit('getUnreadMessages', currentUserId);
 });
 
@@ -295,10 +295,6 @@ async function startApplication() {
         return;
     }
 
-    // Determine who has read the message at the time of sending.
-    // The sender has definitely read it.
-    // Any other participant currently in the chat room (i.e., having an active socket in that room)
-    // should also have it marked as read immediately.
     const readers = new Set([currentUserId]);
     const chatRoomSockets = io.sockets.adapter.rooms.get(data.chatId);
 
@@ -316,7 +312,7 @@ async function startApplication() {
         senderId: currentUserId,
         message: data.message,
         timestamp: new Date(),
-        readBy: Array.from(readers) // Convert Set to Array
+        readBy: Array.from(readers) 
     };
     const result = await messagesCollection.insertOne(newMessage);
     newMessage._id = result.insertedId;
@@ -326,15 +322,13 @@ async function startApplication() {
     );
     io.to(data.chatId).emit('newMessage', newMessage);
 
-    // Emit 'getUnreadMessages' to all participants of the chat
-    // This ensures that their unread counts are updated in real-time
+
     chat.participants.forEach(async participantId => {
-        // Emit only if the message was not read by the participant at the time of sending
+
         if (!readers.has(participantId)) {
             io.to(`user-${participantId}`).emit('getUnreadMessages', participantId);
         }
 
-        // Also emit notification if the participant is not in the chat room
         if (participantId !== currentUserId) {
             const participantUser = await usersCollection.findOne({ mysqlUserId: participantId });
             if (participantUser && participantUser.socketId && io.sockets.sockets.has(participantUser.socketId)) {
@@ -355,14 +349,11 @@ async function startApplication() {
             socket.on('getUnreadMessages', async (userId) => {
     console.log(`[Server] getUnreadMessages called by userId: ${userId}`);
     try {
-        // Ensure userId is string (since readBy stores string MySQL ids)
         const userIdStr = userId.toString();
 
-        // Get all chat IDs the user participates in
         const userChats = await chatsCollection.find({ participants: userIdStr }).project({ _id: 1 }).toArray();
         const chatIds = userChats.map(c => c._id);
 
-        // Find messages the user has NOT read
         const unreadMessages = await messagesCollection.find({
             chatId: { $in: chatIds },
             readBy: { $nin: [userIdStr] }
@@ -376,13 +367,84 @@ async function startApplication() {
 });
 
 
+socket.on('addParticipantsToChat', async ({ chatId, newParticipantIds }) => {
+    if (!currentUserId || !chatId || !Array.isArray(newParticipantIds) || newParticipantIds.length === 0) {
+        socket.emit('chatError', 'Invalid request to add participants.');
+        return;
+    }
+
+    try {
+        const chatObjectId = new ObjectId(chatId);
+        const chat = await chatsCollection.findOne({ _id: chatObjectId });
+
+        if (!chat) {
+            socket.emit('chatError', 'Chat not found.');
+            return;
+        }
+
+        if (!chat.participants.includes(currentUserId)) {
+            socket.emit('chatError', 'You are not a participant of this chat.');
+            return;
+        }
+
+        const validNewParticipants = [];
+        for (const newPId of newParticipantIds) {
+            const userExists = await usersCollection.countDocuments({ mysqlUserId: newPId });
+            if (userExists && !chat.participants.includes(newPId)) {
+                validNewParticipants.push(newPId);
+            } else if (chat.participants.includes(newPId)) {
+                console.warn(`Attempted to add participant ${newPId} who is already in chat ${chatId}`);
+            } else {
+                console.warn(`Attempted to add non-existent user ID: ${newPId}`);
+            }
+        }
+
+        if (validNewParticipants.length === 0) {
+            socket.emit('chatError', 'No valid new participants to add, or they are already in the chat.');
+            return;
+        }
+
+        const result = await chatsCollection.updateOne(
+            { _id: chatObjectId },
+            { $addToSet: { participants: { $each: validNewParticipants } } }
+        );
+
+       if (result.modifiedCount > 0) {
+            console.log(`Added participants ${validNewParticipants.join(', ')} to chat ${chatId}`);
+
+            const updatedChat = await chatsCollection.findOne({ _id: chatObjectId });
+
+            validNewParticipants.forEach(pId => {
+                io.to(`user-${pId}`).emit('participantsAdded', { chatId: updatedChat._id, newParticipants: validNewParticipants });
+            });
+
+            updatedChat.participants.forEach(pId => {
+                io.to(`user-${pId}`).emit('refreshMyChatsList');
+            });
+
+        } else {
+            socket.emit('chatError', 'Failed to add participants (no change detected or already added).');
+        }
+
+    } catch (error) {
+        console.error('Error adding participants to chat:', error);
+        socket.emit('chatError', 'Server error adding participants.');
+    }
+});
 
 
+socket.on('requestChatsList', async (userId) => {
+    console.log(`[Server] User ${userId} requested their chats list.`);
+    try {
+        const userChats = await chatsCollection.find({ participants: userId.toString() }).toArray();
+        io.to(`user-${userId}`).emit('chatsList', userChats);
+        console.log(`[Server] Sent ${userChats.length} chats to user ${userId}.`);
+    } catch (error) {
+        console.error(`Error fetching chats list for user ${userId}:`, error);
+        io.to(`user-${userId}`).emit('chatError', 'Failed to retrieve chat list.');
+    }
+});        
 
-            
-
-       // INSIDE io.on('connection', async (socket) => { ... });
-// Locate the 'markMessagesAsRead' event
 socket.on('markMessagesAsRead', async ({ chatId, userId }) => {
     try {
         const userIdStr = userId.toString();
@@ -393,7 +455,6 @@ socket.on('markMessagesAsRead', async ({ chatId, userId }) => {
         );
         console.log(`Marked ${result.modifiedCount} messages as read by ${userIdStr} in chat ${chatId}`);
 
-        // After marking messages as read, emit updated unread count to the user
         io.to(`user-${userIdStr}`).emit('getUnreadMessages', userIdStr);
 
     } catch (err) {
@@ -401,8 +462,6 @@ socket.on('markMessagesAsRead', async ({ chatId, userId }) => {
     }
 });
 
-
-            
 
             socket.on('disconnect', async () => {
                 if (currentUserId) {
