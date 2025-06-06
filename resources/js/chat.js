@@ -12,7 +12,8 @@ let selectedParticipants = new Set();
 let receivedAllUsersData = false; 
 let pendingChatsData = [];        
 
-
+let unreadMessages = [];
+let pendingUnreadMessages = [];
 
 const chatsList = document.getElementById('chats-list');
 const messagesHistory = document.getElementById('messages-history');
@@ -31,8 +32,10 @@ const availableParticipantsDiv = document.getElementById('available-participants
 const confirmAddParticipantsBtn = document.getElementById('confirm-add-participants-btn');
 const cancelAddParticipantsBtn = document.getElementById('cancel-add-participants-btn');
 const closeAddParticipantsBtn = document.getElementById('close-add-participants-btn');
-
-
+const notificationsDropdown = document.querySelector('.notifications .dropdown'); 
+const planeIcon = document.querySelector('.plane-icon');
+const notificationCircle = document.getElementById('notification-circle');
+const notificationsContainer = document.querySelector('.notifications');
 document.getElementById('add-participant-btn').style.display = 'none';
 document.getElementById('current-chat-name').textContent = 'Select a Chat';
 
@@ -101,15 +104,18 @@ function confirmAddParticipants() {
 
 function processInitialData() {
     if (receivedAllUsersData && pendingChatsData.length > 0) {
-        console.log("[chat.js] Both allUsers and chatsList received. Processing initial data.");
-
-        renderChatsList(pendingChatsData); 
+        console.log("[chat.js] Both allUsers and chatsList received. Processing initial chat data.");
+        renderChatsList(pendingChatsData);
         initializeChatOnPageLoad();
-
         pendingChatsData = [];
-
     } else {
-        console.log("[chat.js] Waiting for all initial data. receivedAllUsersData:", receivedAllUsersData, "pendingChatsData length:", pendingChatsData.length);
+        console.log("[chat.js] Waiting for all initial chat data. receivedAllUsersData:", receivedAllUsersData, "pendingChatsData length:", pendingChatsData.length);
+    }
+
+    if (receivedAllUsersData && pendingUnreadMessages.length > 0) {
+        console.log("[chat.js] All users and pending unread messages received. Processing unread messages.");
+        processUnreadMessages(pendingUnreadMessages);
+        pendingUnreadMessages = []; // Clear pending messages after processing
     }
 }
 
@@ -167,6 +173,19 @@ socket.on('allUsersList', (users) => {
     receivedAllUsersData = true; 
     renderAvailableStudents();
     processInitialData(); 
+    
+});
+
+socket.on('unreadMessages', (messages) => {
+    console.log('[Client Chat.js] Received unreadMessages:', messages);
+
+    if (!receivedAllUsersData) {
+        pendingUnreadMessages = messages; 
+        console.log("Unread messages received before all users in chat.js, storing them.");
+        return;
+    }
+
+    processUnreadMessages(messages);
 });
 
 
@@ -229,25 +248,22 @@ socket.on('chatHistory', (data) => {
 
 socket.on('newMessage', (message) => {
     if (message.chatId === currentChatId) {
+        // Message is for the currently open chat, display it directly
         displayMessage(message);
         messagesHistory.scrollTop = messagesHistory.scrollHeight;
+        // Mark as read immediately since the user is viewing the chat
+        socket.emit('markMessagesAsRead', {
+            chatId: message.chatId,
+            userId: currentUser.mysqlUserId,
+            messageIds: [message._id] // Mark this specific message as read
+        });
+        // Request unread messages to update the dropdown (should decrease count)
+        socket.emit('getUnreadMessages', currentUser.mysqlUserId);
     } else {
+        // Message is for another chat, trigger notification and update dropdown
         console.log('New message in another chat:', message);
-
-        const plane = document.querySelector('.plane-icon');
-        if (plane) plane.classList.add('animate');
-        const notificationCircle = document.getElementById('notification-circle');
-        if (notificationCircle) notificationCircle.style.opacity = 1;
-        const notificationsContainer = document.querySelector('.notifications');
-        if (notificationsContainer) notificationsContainer.classList.add('no-hover');
-
-        setTimeout(() => {
-            if (plane) plane.classList.remove('animate');
-        }, 500);
-
-        setTimeout(() => {
-            if (notificationsContainer) notificationsContainer.classList.remove('no-hover');
-        }, 750);
+        triggerNotificationAnimation(); // New function call
+        socket.emit('getUnreadMessages', currentUser.mysqlUserId); // Request unread messages to update dropdown
     }
 });
 
@@ -259,23 +275,24 @@ socket.on('refreshMyChatsList', () => {
 socket.on('newNotification', (notification) => {
     if (notification.chatId !== currentChatId) {
         console.log('Notification received:', notification);
-
-        const plane = document.querySelector('.plane-icon');
-        if (plane) plane.classList.add('animate');
-        const notificationCircle = document.getElementById('notification-circle');
-        if (notificationCircle) notificationCircle.style.opacity = 1;
-        const notificationsContainer = document.querySelector('.notifications');
-        if (notificationsContainer) notificationsContainer.classList.add('no-hover');
-
-        setTimeout(() => {
-            if (plane) plane.classList.remove('animate');
-        }, 500);
-
-        setTimeout(() => {
-            if (notificationsContainer) notificationsContainer.classList.remove('no-hover');
-        }, 750);
+        triggerNotificationAnimation(); // Use the consolidated function
+        socket.emit('getUnreadMessages', currentUser.mysqlUserId); // Request unread messages
     }
 });
+
+function triggerNotificationAnimation() {
+    if (planeIcon) planeIcon.classList.add('animate');
+    if (notificationCircle) notificationCircle.style.opacity = 1;
+    if (notificationsContainer) notificationsContainer.classList.add('no-hover');
+
+    setTimeout(() => {
+        if (planeIcon) planeIcon.classList.remove('animate');
+    }, 500);
+
+    setTimeout(() => {
+        if (notificationsContainer) notificationsContainer.classList.remove('no-hover');
+    }, 750);
+}
 
 socket.on('userStatusUpdate', (data) => {
     console.log('User status update:', data);
@@ -378,10 +395,12 @@ function joinChat(chatId, chatName) {
     currentChatName.textContent = chatName;
 
     socket.emit('joinChat', chatId);
-    socket.emit('markMessagesAsRead', {
+     socket.emit('markMessagesAsRead', {
         chatId: chatId,
         userId: currentUser.mysqlUserId
     });
+
+    socket.emit('getUnreadMessages', currentUser.mysqlUserId);
 
     document.getElementById('add-participant-btn').style.display = 'inline-block';
 
@@ -413,6 +432,8 @@ function joinChat(chatId, chatName) {
                 participantsContainer.appendChild(createNameSpan(name, color));
             });
     }
+
+    
 
     const newChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
     if (newChatItem) newChatItem.classList.add('active-chat');
@@ -584,4 +605,138 @@ closeAddParticipantsBtn.addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    const notificationsPageIcon = document.querySelector('.notificationsIcon'); // Assuming this takes you to /messages page
+    if (notificationsPageIcon) {
+        notificationsPageIcon.addEventListener('click', () => {
+            if (notificationCircle) notificationCircle.style.opacity = 0;
+            window.location.href = '/messages'; // Navigate to the page that loads chat.js
+        });
+    }
 });
+
+
+// --- ADD THESE NEW FUNCTIONS ---
+
+// Function to encapsulate processing unread messages
+function processUnreadMessages(messages) {
+    // Filter out messages for the currently open chat from the unread list
+    unreadMessages = messages.filter(msg => msg.chatId !== currentChatId).map(msg => ({
+        chatId: msg.chatId,
+        user: getDisplayName(msg.senderId), // Uses allUsers map via getDisplayName
+        text: msg.message,
+        _id: msg._id // Ensure message ID is passed for marking specific messages
+    }));
+    updateUnreadDropdown();
+
+    // Update notification circle opacity based on message count
+    if (notificationCircle) {
+        notificationCircle.style.opacity = unreadMessages.length > 0 ? 1 : 0;
+    }
+}
+
+function getDisplayName(userId) {
+    if (userId === currentUser.mysqlUserId) return 'You';
+
+    const user = allUsers.get(userId); // Use allUsers map directly
+
+    if (user) {
+        if (user.name && user.lastname) {
+            return `${user.name} ${user.lastname}`;
+        }
+        if (user.loginName) {
+            return user.loginName;
+        }
+    }
+    return `User ${userId}`; // Fallback if user not found or incomplete data
+}
+
+function renderMessageComponent(msg) {
+    // This renders a single message item in the dropdown
+    return `
+        <div class="message-dropdown-item" data-chat-id="${msg.chatId}" data-message-id="${msg._id}">
+            <div class="message-content">
+                <span class="user-name">${msg.user}</span>
+                <p class="message-text">${msg.text}</p>
+            </div>
+        </div>
+    `;
+}
+
+function updateUnreadDropdown() {
+    if (!notificationsDropdown) {
+        console.error('Notifications dropdown element not found!');
+        return;
+    }
+
+    if (unreadMessages.length === 0) {
+        notificationsDropdown.innerHTML = '<div class="no-messages">No unread messages</div>';
+    } else {
+        const messagesHtml = unreadMessages.map(renderMessageComponent).join('');
+        notificationsDropdown.innerHTML = `
+            ${messagesHtml}
+            <div class="dropdown-footer">
+                <button id="markAllReadBtn" class="mark-all-read-button">Mark All as Read</button>
+            </div>
+        `;
+        const markAllReadBtn = document.getElementById('markAllReadBtn');
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', markAllUnreadAsRead);
+        }
+
+        notificationsDropdown.querySelectorAll('.message-dropdown-item').forEach(messageDiv => {
+            messageDiv.addEventListener('click', (event) => {
+                const clickedChatId = messageDiv.dataset.chatId;
+                const clickedMessageId = messageDiv.dataset.messageId; // Get message ID
+                if (clickedChatId) {
+                    // Mark this specific message as read
+                    socket.emit('markMessagesAsRead', {
+                        chatId: clickedChatId,
+                        userId: currentUser.mysqlUserId,
+                        messageIds: [clickedMessageId]
+                    });
+                    // Navigate to the chat page with the chat ID in the URL
+                    window.location.href = `/messages?chatId=${clickedChatId}`;
+                }
+            });
+        });
+    }
+}
+
+function markAllUnreadAsRead() {
+    const allUnreadMessageIds = unreadMessages.map(msg => msg._id);
+
+    if (allUnreadMessageIds.length > 0) {
+        // Emit for all unique message IDs if your server supports marking multiple messages as read
+        socket.emit('markMessagesAsRead', {
+            chatId: null, // Set to null or a specific chat ID if your server requires it
+            userId: currentUser.mysqlUserId,
+            messageIds: allUnreadMessageIds
+        });
+    }
+
+    unreadMessages = []; // Clear local unread messages
+    updateUnreadDropdown(); // Update the UI to show no messages
+    if (notificationCircle) {
+        notificationCircle.style.opacity = 0;
+    }
+}
+
+
+if (notificationsContainer) {
+    notificationsContainer.addEventListener('click', (event) => {
+        // Prevent click inside dropdown from closing it
+        if (notificationsDropdown && notificationsDropdown.contains(event.target)) {
+            return;
+        }
+        // Toggle display
+        notificationsDropdown.style.display = notificationsDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    // Close dropdown if clicked outside
+    document.addEventListener('click', (event) => {
+        if (notificationsContainer && !notificationsContainer.contains(event.target)) {
+            if (notificationsDropdown) {
+                notificationsDropdown.style.display = 'none';
+            }
+        }
+    });
+}
