@@ -1,22 +1,22 @@
+import { io } from 'socket.io-client';
 
-import { io } from 'socket.io-client'; 
-
-const SOCKET_SERVER_URL = 'http://localhost:3000'; 
+const SOCKET_SERVER_URL = 'http://localhost:3000';
 
 const socket = io(SOCKET_SERVER_URL);
-let currentChatId = null; 
-let availableStudents = []; 
+let currentChatId = null;
+let allUsers = new Map(); // Stores all users for quick ID lookups
+let activeChats = [];     // Still needed for currently loaded chats
+let availableStudents = [];
 let selectedParticipants = new Set(); 
-let activeChats = [];
 
 const currentUser = {
-        mysqlUserId: window.chatConfig.studentId,
-        loginName: window.chatConfig.loginName,
-        name: window.chatConfig.studentName, 
-        lastname: window.chatConfig.studentLastname 
+    mysqlUserId: window.chatConfig.studentId,
+    loginName: window.chatConfig.loginName,
+    name: window.chatConfig.studentName,
+    lastname: window.chatConfig.studentLastname
 };
 
-
+// DOM Elements (no changes here, just for context)
 const chatsList = document.getElementById('chats-list');
 const messagesHistory = document.getElementById('messages-history');
 const messageInput = document.getElementById('message-input');
@@ -28,11 +28,13 @@ const availableStudentsDiv = document.getElementById('available-students');
 const newChatNameInput = document.getElementById('new-chat-name-input');
 const confirmCreateChatBtn = document.getElementById('confirm-create-chat-btn');
 const cancelCreateChatBtn = document.getElementById('cancel-create-chat-btn');
-const addParticipantBtn = document.getElementById('add-participant-btn'); 
+const addParticipantBtn = document.getElementById('add-participant-btn');
 const addParticipantModal = document.getElementById('add-participant-modal');
-const availableParticipantsDiv = document.getElementById('available-participants-for-add'); 
+const availableParticipantsDiv = document.getElementById('available-participants-for-add');
 const confirmAddParticipantsBtn = document.getElementById('confirm-add-participants-btn');
-const cancelAddParticipantsBtn = document.getElementById('cancel-add-participants-btn'); 
+const cancelAddParticipantsBtn = document.getElementById('cancel-add-participants-btn');
+
+// --- Socket Event Handlers ---
 
 socket.on('connect', () => {
     console.log('Connected to chat server!', socket.id);
@@ -42,8 +44,9 @@ socket.on('connect', () => {
         name: currentUser.name,
         lastname: currentUser.lastname
     });
-    socket.emit('requestChatsList', currentUser.mysqlUserId); 
-    socket.emit('getUnreadMessages', currentUser.mysqlUserId); 
+    // Removed requestChatsList here
+    socket.emit('requestAllUsers'); // Request all users data first
+    socket.emit('getUnreadMessages', currentUser.mysqlUserId);
 });
 
 socket.on('disconnect', () => {
@@ -52,40 +55,69 @@ socket.on('disconnect', () => {
 
 socket.on('chatError', (message) => {
     console.error('Chat Error:', message);
-    alert('Chat Error: ' + message); 
+    alert('Chat Error: ' + message);
 });
+
+// IMPORTANT: This handler now populates the `allUsers` Map
+socket.on('allUsersList', (users) => {
+    allUsers.clear(); // Clear previous data
+    users.forEach(user => {
+        allUsers.set(user.mysqlUserId, user); // Store users in the Map
+    });
+    console.log('Updated allUsers map:', allUsers);
+
+    // ************ CRITICAL CHANGE HERE ************
+    // Request chats list ONLY AFTER allUsers is populated
+    socket.emit('requestChatsList', currentUser.mysqlUserId);
+    // Also re-render available students for modals, etc.
+    renderAvailableStudents();
+});
+
 
 socket.on('chatsList', (chats) => {
     console.log('Received chats list:', chats);
     chatsList.innerHTML = '';
-    activeChats = chats; 
+    activeChats = chats;
 
     chats.forEach(chat => {
         const chatItem = document.createElement('div');
         chatItem.classList.add('chat-item');
         chatItem.dataset.chatId = chat._id;
-        let displayName = chat.name;
 
-        if (chat.type === 'private' && chat.participants.length === 2) {
-            const otherParticipantId = chat.participants.find(p => p !== currentUser.mysqlUserId);
+        let displayHtml = ''; // For the chat list item's innerHTML
+        let chatWindowDisplayName = chat.name || 'Unnamed Chat'; // Default to server-provided name
 
-            const otherUser = availableStudents.find(s => s.mysqlUserId === otherParticipantId);
+        if (chat.type === 'private' && chat.otherParticipantMySqlId) {
+            const otherUser = allUsers.get(chat.otherParticipantMySqlId);
 
             if (otherUser) {
-                displayName = `${otherUser.name} ${otherUser.lastname}`;
+                const isOnline = otherUser.status === 'online';
+                const color = isOnline ? 'green' : 'gray';
+                const fontWeight = isOnline ? 'bold' : 'normal';
+
+                // Use the server-provided chat.name (which should now be "Name Lastname" from server.js)
+                // And apply the styling based on the otherUser's status from allUsers map
+                displayHtml = `<span style="color: ${color}; font-weight: ${fontWeight};">
+                                    ${chat.name}
+                                </span>`;
+                // chatWindowDisplayName is already correctly set from chat.name for private chats now by server
             } else {
-                
-                console.warn(`User details not found for ID: ${otherParticipantId}. Displaying generic name.`);
-                displayName = `Unknown User`; 
+                // This block should ideally be hit much less frequently now due to the timing fix
+                console.warn(`User details (for status display) not found in allUsers for ID: ${chat.otherParticipantMySqlId}.`);
+                displayHtml = `<span style="color: gray;">${chat.name || 'Unknown User'}</span>`;
+                // chatWindowDisplayName remains chat.name or fallback
             }
+        } else {
+            // For group chats
+            displayHtml = chat.name || 'Unnamed Group Chat';
+            // chatWindowDisplayName remains chat.name or fallback
         }
-        chatItem.textContent = displayName;
-        chatItem.addEventListener('click', () => joinChat(chat._id, displayName));
+
+        chatItem.innerHTML = displayHtml;
+        chatItem.addEventListener('click', () => joinChat(chat._id, chatWindowDisplayName));
         chatsList.appendChild(chatItem);
     });
 });
-
-
 
 
 
