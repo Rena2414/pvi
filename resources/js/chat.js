@@ -309,16 +309,33 @@ function joinChat(chatId, chatName) {
     document.getElementById('add-participant-btn').style.display = 'inline-block';
 
     // Prepare and display participant names
-    const participantNames = currentChat.participants
-        .filter(pid => pid !== currentUser.mysqlUserId)
-        .map(pid => {
-            const user = availableStudents.find(s => s.mysqlUserId === pid);
-            return user ? `${user.name} ${user.lastname}` : 'Unknown';
-        });
+    const participantsContainer = document.getElementById('chat-participants');
+participantsContainer.innerHTML = ''; // Clear previous content
 
-    const selfDisplay = `${currentUser.name} ${currentUser.lastname} (You)`;
-    const allParticipants = [selfDisplay, ...participantNames];
-    document.getElementById('chat-participants').textContent = allParticipants.join(', ');
+const createNameSpan = (name, color, isYou = false) => {
+    const span = document.createElement('span');
+    span.textContent = isYou ? `${name} (You)` : name;
+    span.style.color = color;
+    span.style.marginRight = '10px';
+    return span;
+};
+
+// Add current user (You)
+participantsContainer.appendChild(createNameSpan(
+    `${currentUser.name} ${currentUser.lastname}`,
+    'green',
+    true
+));
+
+// Add other participants
+currentChat.participants
+    .filter(pid => pid !== currentUser.mysqlUserId)
+    .forEach(pid => {
+        const user = availableStudents.find(s => s.mysqlUserId === pid);
+        const name = user ? `${user.name} ${user.lastname}` : 'Unknown';
+        const color = user?.status === 'online' ? 'green' : 'gray';
+        participantsContainer.appendChild(createNameSpan(name, color));
+    });
 
     // Highlight newly active chat
     const newChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
