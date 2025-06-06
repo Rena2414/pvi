@@ -212,7 +212,7 @@ async function startApplication() {
             socket.on('createChat', async (data) => {
                 let chatName = data.name; 
             let otherParticipantMySqlId = null; 
-
+            const uniqueParticipants = [...new Set([...data.participants, currentUserId])];
             if (data.type === 'private') {
                 const otherParticipantId = uniqueParticipants.find(p => p !== currentUserId);
                 const otherUser = await usersCollection.findOne({ mysqlUserId: otherParticipantId });

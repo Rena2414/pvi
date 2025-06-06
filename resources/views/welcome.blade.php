@@ -104,5 +104,16 @@
     
     </script>
     
+    <script>
+        window.chatConfig = {
+            csrfToken: "{{ $csrfToken }}",
+            loginName: "{{ $loginName ?? '' }}", 
+            studentId: "{{ $studentId ?? '' }}",
+            studentName: "{{ $studentName ?? '' }}",
+            studentLastname: "{{ $studentLastname ?? '' }}"
+        };
+    </script>
+
+    @vite(['resources/css/app.css', 'resources/js/index.js'])
 </body>
 </html>
