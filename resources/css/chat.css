@@ -195,6 +195,17 @@
 }
 
 
+.chat-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-participants {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 4px;
+}
+
 /* Modals */
 .modal {
     display: none;

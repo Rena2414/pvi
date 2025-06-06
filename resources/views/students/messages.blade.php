@@ -33,7 +33,10 @@
 
             <div class="chat-window">
                 <div class="chat-header">
-                    <h3 id="current-chat-name">Select a Chat</h3>
+                    <div class="chat-title">
+                        <h3 id="current-chat-name">Select a Chat</h3>
+                        <div id="chat-participants" class="chat-participants"></div>
+                    </div>
                     <button id="add-participant-btn">Add Participant</button>
                 </div>
                 <div class="messages-history" id="messages-history">

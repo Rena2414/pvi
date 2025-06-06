@@ -281,29 +281,53 @@ function displayMessage(message) {
 }
 
 
-
 function joinChat(chatId, chatName) {
-     if (currentChatId) {
-         const prevChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
-         if (prevChatItem) prevChatItem.classList.remove('active-chat');
-     }
- 
+    // Remove highlight from previously active chat
+    if (currentChatId) {
+        const prevChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
+        if (prevChatItem) prevChatItem.classList.remove('active-chat');
+    }
+
+    // Find the selected chat before updating currentChatId
+    const currentChat = activeChats.find(chat => chat._id === chatId);
+    if (!currentChat) {
+        console.error(`Chat with ID ${chatId} not found.`);
+        return;
+    }
+
+    // Update current chat state
     currentChatId = chatId;
-     currentChatName.textContent = chatName;
+    currentChatName.textContent = chatName;
 
     socket.emit('joinChat', chatId);
+    socket.emit('markMessagesAsRead', {
+        chatId: chatId,
+        userId: currentUser.mysqlUserId
+    });
 
-     socket.emit('markMessagesAsRead', {
-         chatId: chatId,
-         userId: currentUser.mysqlUserId
-     });
-
-
-     const newChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
-    if (newChatItem) newChatItem.classList.add('active-chat');
+    // Show the add participant button
     document.getElementById('add-participant-btn').style.display = 'inline-block';
+
+    // Prepare and display participant names
+    const participantNames = currentChat.participants
+        .filter(pid => pid !== currentUser.mysqlUserId)
+        .map(pid => {
+            const user = availableStudents.find(s => s.mysqlUserId === pid);
+            return user ? `${user.name} ${user.lastname}` : 'Unknown';
+        });
+
+    const selfDisplay = `${currentUser.name} ${currentUser.lastname} (You)`;
+    const allParticipants = [selfDisplay, ...participantNames];
+    document.getElementById('chat-participants').textContent = allParticipants.join(', ');
+
+    // Highlight newly active chat
+    const newChatItem = document.querySelector(`.chat-item[data-chat-id="${currentChatId}"]`);
+    if (newChatItem) newChatItem.classList.add('active-chat');
+
+    // Update chat name again (for consistency)
     document.getElementById('current-chat-name').textContent = chatName;
 }
+
 
 
 
